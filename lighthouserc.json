@@ -1,9 +1,9 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "PORT=9456 bun .next/standalone/server.js",
+      "startServerCommand": "node .next/standalone/server.js",
       "startServerReadyPattern": "Ready",
-      "url": ["http://localhost:9456"],
+      "url": ["http://localhost:3000"],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop"
