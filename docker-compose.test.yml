@@ -1,0 +1,36 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: bun run test
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://test:test@postgres:5432/content_forge_test
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=test
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: content_forge_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
