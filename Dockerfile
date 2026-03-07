@@ -10,6 +10,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PHASE=phase-production-build
+# Build-time placeholder values (overridden at runtime via docker-compose/K8s)
+ENV DATABASE_URL="https://placeholder.db"
+ENV REDIS_URL="https://placeholder.redis"
+ENV NEXT_PUBLIC_SUPABASE_URL="https://placeholder.supabase.co"
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="placeholder-anon-key"
 RUN bun run build
 
 # Stage 3: Production
