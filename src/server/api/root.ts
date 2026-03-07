@@ -5,6 +5,7 @@ import { contentRouter } from "./routers/content";
 import { reviewRouter } from "./routers/review";
 import { publishRouter } from "./routers/publish";
 import { analyticsRouter } from "./routers/analytics";
+import { billingRouter } from "./routers/billing";
 
 export const appRouter = createTRPCRouter({
   source: sourceRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   review: reviewRouter,
   publish: publishRouter,
   analytics: analyticsRouter,
+  billing: billingRouter,
 });
 
 export type AppRouter = typeof appRouter;

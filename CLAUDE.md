@@ -238,3 +238,20 @@ make logs          # Docker 로그 확인
 9. CI 통과 확인
 10. 머지 후: IMPLEMENTATION_TRACKER.md 해당 항목 체크 + 파일 경로 기록
 ```
+
+## 이슈 완료 후 세션 관리
+
+이슈 작업이 완료되면 (커밋 또는 PR 생성 후) 반드시 다음 순서를 따른다:
+
+1. **MEMORY.md 업데이트**: 완료된 작업, 다음 작업, 변경된 사항 반영
+2. **세션 정리**: 대화가 길어졌으면 (이슈 1개 이상 처리 완료) `/clear` 실행
+
+### /ralph 사용 시 흐름
+```
+구현 → architect 검증 통과 → /cancel → MEMORY.md 저장 → /clear
+```
+
+### 규칙
+- 이슈 완료 시점에 항상 memory 반영 먼저, `/clear`는 그 다음
+- `/clear` 전에 사용자에게 "memory 저장 완료, /clear 하겠습니다" 안내
+- 새 세션에서는 CLAUDE.md + `gh issue list` + IMPLEMENTATION_TRACKER.md 확인 후 다음 이슈 진행

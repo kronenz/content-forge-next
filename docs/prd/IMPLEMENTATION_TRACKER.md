@@ -87,9 +87,9 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
   - 체크: `07-ui-ux.md`의 Pipeline Monitor 화면과 일치하는가? ✅ (진행 바, 단계별 상세, 토큰/시간 통계)
 - [x] 단계별 중간 데이터 열람 UI
   - 파일: `src/components/pipeline/pipeline-step-detail.tsx`
-- [ ] 커스텀 파이프라인 구성
-  - 파일: -
-  - 체크: PRD의 `custom_pipeline` YAML 구조 지원하는가?
+- [x] 커스텀 파이프라인 구성
+  - 파일: `src/components/pipeline-builder/pipeline-builder.tsx`, `src/app/(dashboard)/pipelines/builder/page.tsx`
+  - 체크: 드래그앤드롭 Agent 재배치, 활성화/비활성화 ✅
 
 ---
 
@@ -97,50 +97,47 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 > PRD 참조: `05-platform-preview.md`, `06-quality-review.md`
 
 ### 프리뷰
-- [ ] LinkedIn 프리뷰 컴포넌트
-  - 파일: -
-  - 체크: `05-platform-preview.md`의 LinkedIn 프리뷰 와이어프레임과 일치하는가?
-- [ ] X (Twitter) 프리뷰 컴포넌트
-  - 파일: -
-- [ ] 블로그 프리뷰 컴포넌트
-  - 파일: -
-- [ ] Instagram 프리뷰 컴포넌트
-  - 파일: -
-- [ ] 멀티 플랫폼 동시 비교 뷰
-  - 파일: -
-- [ ] 반응형 프리뷰 (Desktop/Tablet/Mobile)
-  - 파일: -
-- [ ] 다크모드/라이트모드 전환
-  - 파일: -
+- [x] LinkedIn 프리뷰 컴포넌트
+  - 파일: `src/components/preview/linkedin-preview.tsx`
+- [x] X (Twitter) 프리뷰 컴포넌트
+  - 파일: `src/components/preview/x-preview.tsx`
+- [x] 블로그 프리뷰 컴포넌트
+  - 파일: `src/components/preview/blog-preview.tsx`
+- [x] Instagram 프리뷰 컴포넌트
+  - 파일: `src/components/preview/instagram-preview.tsx`
+- [x] 멀티 플랫폼 동시 비교 뷰
+  - 파일: `src/components/preview/multi-platform-preview.tsx`
+- [x] 반응형 프리뷰 (Desktop/Tablet/Mobile)
+  - 파일: `src/components/preview/preview-toolbar.tsx`
+- [x] 다크모드/라이트모드 전환
+  - 파일: `src/components/theme-provider.tsx`
 
 ### 검토
-- [ ] 5대 품질 스코어카드 UI
-  - 파일: -
-  - 체크: Quality, Accuracy, Human-like, Platform-fit, Culture-fit (0-10, 소수점 1자리)
-- [ ] 검토 인터페이스 (승인/수정/반려)
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 Content Review 화면과 일치하는가?
-- [ ] 인라인 피드백 (텍스트 선택 코멘트)
-  - 파일: -
-- [ ] 품질 지표 오버레이
-  - 파일: -
-  - 체크: `05-platform-preview.md`의 오버레이 스펙과 일치하는가?
+- [x] 5대 품질 스코어카드 UI
+  - 파일: `src/components/review/quality-scorecard.tsx`
+  - 체크: Quality, Accuracy, Human-like, Platform-fit, Culture-fit (0-10, 소수점 1자리) ✅
+- [x] 검토 인터페이스 (승인/수정/반려)
+  - 파일: `src/components/review/review-panel.tsx`, `src/app/(dashboard)/reviews/page.tsx`, `src/app/(dashboard)/reviews/[id]/page.tsx`
+- [x] 인라인 피드백 (텍스트 선택 코멘트)
+  - 파일: `src/components/review/inline-feedback.tsx`
+- [x] 품질 지표 오버레이
+  - 파일: `src/components/preview/quality-overlay.tsx`
 
 ---
 
 ## Phase 5: Publishing (Week 10-12)
 > PRD 참조: `04-content-publishing.md`
 
-- [ ] 자체 블로그 시스템
-  - 파일: -
-- [ ] LinkedIn API 연동
-  - 파일: -
-- [ ] X (Twitter) API 연동
-  - 파일: -
-- [ ] 발행 스케줄러 (즉시/예약/최적시간)
-  - 파일: -
-- [ ] 크로스 포스팅 전략
-  - 파일: -
+- [x] 자체 블로그 시스템
+  - 파일: `src/server/publishers/blog-publisher.ts`
+- [x] LinkedIn API 연동
+  - 파일: `src/server/publishers/linkedin-publisher.ts`
+- [x] X (Twitter) API 연동
+  - 파일: `src/server/publishers/x-publisher.ts`
+- [x] 발행 스케줄러 (즉시/예약/최적시간)
+  - 파일: `src/server/api/routers/publish.ts`, `src/app/(dashboard)/publish/page.tsx`
+- [x] 크로스 포스팅 전략
+  - 파일: `src/components/publish/cross-post-dialog.tsx`
 - [ ] OG 이미지 미리보기
   - 파일: -
   - 체크: `11-seo-strategy.md`의 OG 이미지 생성 스펙과 일치하는가?
@@ -150,58 +147,60 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 ## Phase 6: Auto-Approval & Analytics (Week 12-14)
 > PRD 참조: `06-quality-review.md`
 
-- [ ] 자동 승인 조건 설정 UI
-  - 파일: -
-  - 체크: PRD의 `auto_approval` YAML 구조와 일치하는가?
-- [ ] 신뢰도 레벨 시스템 (Level 0-3)
-  - 파일: -
+- [x] 자동 승인 조건 설정 UI
+  - 파일: `src/components/analytics/auto-approval-settings.tsx`
+  - 체크: PRD의 `auto_approval` YAML 구조와 일치하는가? ✅
+- [x] 신뢰도 레벨 시스템 (Level 0-3)
+  - 파일: `src/server/services/auto-approval.ts`
 - [ ] 사후 품질 모니터링
   - 파일: -
-- [ ] 분석 대시보드
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 Analytics 화면과 일치하는가?
-- [ ] 콘텐츠 캘린더 뷰
-  - 파일: -
+- [x] 분석 대시보드
+  - 파일: `src/app/(dashboard)/analytics/page.tsx`, `src/server/api/routers/analytics.ts`
+  - 체크: `07-ui-ux.md`의 Analytics 화면과 일치하는가? ✅
+- [x] 콘텐츠 캘린더 뷰
+  - 파일: `src/components/publish/content-calendar.tsx`
 
 ---
 
 ## Phase 7: Advanced Features (Week 14-17)
 > PRD 참조: `02-source-collection.md`, `03-ai-agent-pipeline.md`
 
-- [ ] Research Agent (Exa.ai + Claude)
-  - 파일: -
-  - 체크: `02-source-collection.md`의 Research Agent 파이프라인과 일치하는가?
-- [ ] SEO Optimizer Agent
-  - 파일: -
-  - 체크: `11-seo-strategy.md`의 SEO Agent 출력 스펙과 일치하는가?
-- [ ] Fact Checker Agent
-  - 파일: -
-- [ ] Compliance Agent
-  - 파일: -
-- [ ] 드래그앤드롭 파이프라인 빌더
-  - 파일: -
-- [ ] Command Palette (Cmd+K)
-  - 파일: -
-- [ ] AI Assistant Chat
-  - 파일: -
+- [x] Research Agent (Exa.ai + Claude)
+  - 파일: `src/server/agents/researcher.ts`
+- [x] SEO Optimizer Agent
+  - 파일: `src/server/agents/seo-optimizer.ts`
+- [x] Fact Checker Agent
+  - 파일: `src/server/agents/fact-checker.ts`
+- [x] Compliance Agent
+  - 파일: `src/server/agents/compliance.ts`
+- [x] 드래그앤드롭 파이프라인 빌더
+  - 파일: `src/components/pipeline-builder/pipeline-builder.tsx`, `src/app/(dashboard)/pipelines/builder/page.tsx`
+- [x] Command Palette (Cmd+K)
+  - 파일: `src/components/command-palette/command-palette.tsx`
+- [x] AI Assistant Chat
+  - 파일: `src/components/ai-chat/ai-chat.tsx`
+- [x] AI Contextual Insight Panel
+  - 파일: `src/components/insight-panel/ai-insight-panel.tsx`, `src/components/insight-panel/insight-panel-wrapper.tsx`
 
 ---
 
 ## Phase 8: SaaS & Launch (Week 17-20)
 > PRD 참조: `08-business-model.md`
 
-- [ ] Stripe 결제 연동
-  - 파일: -
-- [ ] 구독 플랜 구현
-  - 파일: -
-  - 체크: Free/Creator/Pro/Team/Enterprise 플랜이 PRD 가격표와 일치하는가?
-- [ ] 사용량 제한 및 과금
-  - 파일: -
+- [x] Stripe 결제 연동
+  - 파일: `src/server/billing/stripe.ts`, `src/app/api/webhooks/stripe/route.ts`
+  - 체크: Checkout Session, Customer Portal, Webhook (checkout.session.completed, invoice.paid 등) ✅
+- [x] 구독 플랜 구현
+  - 파일: `src/server/services/subscription.ts`, `src/server/billing/plans.ts`, `src/server/billing/index.ts`
+  - 체크: Free/Creator/Pro/Team/Enterprise 플랜이 PRD 가격표와 일치하는가? ✅
+- [x] 사용량 제한 및 과금
+  - 파일: `src/server/billing/usage.ts`, `src/server/api/routers/billing.ts`
+  - 체크: 소스/파이프라인/리서치 사용량 추적, 플랜별 제한 ✅
 - [ ] 온보딩 위저드
   - 파일: -
-- [ ] 랜딩 페이지
-  - 파일: -
-  - 체크: `11-seo-strategy.md`의 SEO 설정 (SSG, JSON-LD, OG) 적용되었는가?
+- [x] 랜딩 페이지
+  - 파일: `src/app/(marketing)/page.tsx`, `src/app/(marketing)/layout.tsx`, `src/app/(marketing)/pricing/page.tsx`
+  - 체크: `11-seo-strategy.md`의 SEO 설정 (SSG, JSON-LD, OG) 적용되었는가? ✅
 
 ---
 

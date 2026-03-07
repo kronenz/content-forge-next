@@ -48,6 +48,7 @@ export const agentRoleEnum = pgEnum("agent_role", [
   "compliance",
   "localizer",
   "platform_formatter",
+  "researcher",
 ]);
 
 export const platformEnum = pgEnum("platform", [
@@ -60,6 +61,7 @@ export const platformEnum = pgEnum("platform", [
 export const reviewStatusEnum = pgEnum("review_status", [
   "pending",
   "approved",
+  "revision",
   "rejected",
 ]);
 
@@ -70,6 +72,14 @@ export const publicationStatusEnum = pgEnum("publication_status", [
   "publishing",
   "published",
   "failed",
+]);
+
+export const subscriptionStatusEnum = pgEnum("subscription_status", [
+  "active",
+  "canceled",
+  "past_due",
+  "trialing",
+  "incomplete",
 ]);
 
 // ============================================================
@@ -163,6 +173,9 @@ export const processedContents = pgTable("processed_contents", {
 
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
+  pipelineRunId: uuid("pipeline_run_id").references(() => pipelineRuns.id, {
+    onDelete: "set null",
+  }),
   processedContentId: uuid("processed_content_id")
     .notNull()
     .references(() => processedContents.id, { onDelete: "cascade" }),
@@ -174,6 +187,16 @@ export const reviews = pgTable("reviews", {
   platformFitScore: real("platform_fit_score"),
   cultureFitScore: real("culture_fit_score"),
   feedback: text("feedback"),
+  inlineComments:
+    jsonb("inline_comments").$type<
+      Array<{
+        id: string;
+        selectedText: string;
+        comment: string;
+        position: { start: number; end: number };
+        createdAt: string;
+      }>
+    >(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -197,6 +220,26 @@ export const publications = pgTable("publications", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+});
+
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().unique(),
+  planId: text("plan_id").notNull().default("free"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  stripePriceId: text("stripe_price_id"),
+  status: subscriptionStatusEnum("status").notNull().default("active"),
+  currentPeriodStart: timestamp("current_period_start", { withTimezone: true }),
+  currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+  cancelAtPeriodEnd: integer("cancel_at_period_end").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 // ============================================================
@@ -250,6 +293,10 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
   processedContent: one(processedContents, {
     fields: [reviews.processedContentId],
     references: [processedContents.id],
+  }),
+  pipelineRun: one(pipelineRuns, {
+    fields: [reviews.pipelineRunId],
+    references: [pipelineRuns.id],
   }),
 }));
 
