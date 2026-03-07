@@ -1,9 +1,9 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "PORT=9456 bun run start",
+      "startServerCommand": "bun run start",
       "startServerReadyPattern": "Ready",
-      "url": ["http://localhost:9456"],
+      "url": ["http://localhost:3000"],
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop"
