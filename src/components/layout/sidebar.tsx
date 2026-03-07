@@ -26,7 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { label: "대시보드", href: "/", icon: LayoutDashboard },
+  { label: "대시보드", href: "/dashboard", icon: LayoutDashboard },
   { label: "소스", href: "/sources", icon: Rss },
   { label: "파이프라인", href: "/pipelines", icon: Workflow },
   { label: "콘텐츠", href: "/contents", icon: FileText },

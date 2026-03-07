@@ -14,11 +14,11 @@ import {
   CreditCard,
   Zap,
   Crown,
-  Check,
   ExternalLink,
 } from "lucide-react";
-import { PLANS } from "@/server/billing/plans";
-import type { PlanId } from "@/server/billing/plans";
+import { PLANS, getPlan } from "@/server/services/subscription";
+import { PricingCard } from "@/components/pricing/pricing-card";
+import type { PlanId } from "@/server/services/subscription";
 
 // Demo data (would come from tRPC in production)
 const DEMO_SUBSCRIPTION = {
@@ -35,10 +35,10 @@ const DEMO_USAGE = {
 };
 
 export default function BillingPage() {
-  const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
+  const [yearly, setYearly] = useState(false);
   const subscription = DEMO_SUBSCRIPTION;
   const usage = DEMO_USAGE;
-  const currentPlan = PLANS[subscription.planId];
+  const currentPlan = getPlan(subscription.planId);
 
   return (
     <div className="space-y-6">
@@ -125,129 +125,44 @@ export default function BillingPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">플랜 비교</CardTitle>
+            <CardTitle className="text-base flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              플랜 비교
+            </CardTitle>
             <div className="flex items-center rounded-lg border p-0.5">
               <button
                 className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                  interval === "monthly"
+                  !yearly
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground"
                 }`}
-                onClick={() => setInterval("monthly")}
+                onClick={() => setYearly(false)}
               >
                 월간
               </button>
               <button
                 className={`rounded-md px-3 py-1 text-xs font-medium transition ${
-                  interval === "yearly"
+                  yearly
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground"
                 }`}
-                onClick={() => setInterval("yearly")}
+                onClick={() => setYearly(true)}
               >
-                연간 (20% 할인)
+                연간 (할인)
               </button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {(["free", "creator", "pro", "team"] as PlanId[]).map((planId) => {
-              const plan = PLANS[planId];
-              const price =
-                interval === "monthly"
-                  ? plan.priceMonthly
-                  : plan.priceYearly;
-              const isCurrent = subscription.planId === planId;
-
-              return (
-                <div
-                  key={planId}
-                  className={`relative rounded-lg border p-4 ${
-                    plan.popular
-                      ? "border-primary ring-1 ring-primary"
-                      : "border-border"
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                      <Badge className="text-xs">인기</Badge>
-                    </div>
-                  )}
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="font-semibold">{plan.name}</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {plan.description}
-                      </p>
-                    </div>
-                    <div>
-                      {price === 0 ? (
-                        <span className="text-2xl font-bold">무료</span>
-                      ) : (
-                        <>
-                          <span className="text-2xl font-bold">
-                            ${(price / 100).toFixed(0)}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            /월
-                          </span>
-                        </>
-                      )}
-                    </div>
-                    <ul className="space-y-1.5 text-xs">
-                      <PlanFeature
-                        text={`소스 ${plan.limits.sources >= 9999 ? "무제한" : plan.limits.sources + "개"}`}
-                      />
-                      <PlanFeature
-                        text={`파이프라인 ${plan.limits.pipelineRunsPerMonth >= 9999 ? "무제한" : plan.limits.pipelineRunsPerMonth + "회/월"}`}
-                      />
-                      <PlanFeature
-                        text={`플랫폼 ${plan.limits.platforms >= 10 ? "전체" : plan.limits.platforms + "개"}`}
-                      />
-                      <PlanFeature
-                        text={`팀 멤버 ${plan.limits.teamMembers >= 9999 ? "무제한" : plan.limits.teamMembers + "명"}`}
-                      />
-                      {plan.limits.autoApproval && (
-                        <PlanFeature text="자동 승인" />
-                      )}
-                      {plan.limits.apiAccess && (
-                        <PlanFeature text="API 접근" />
-                      )}
-                      {plan.limits.customPipeline && (
-                        <PlanFeature text="커스텀 파이프라인" />
-                      )}
-                    </ul>
-                    <Button
-                      className="w-full"
-                      variant={isCurrent ? "outline" : "default"}
-                      size="sm"
-                      disabled={isCurrent}
-                    >
-                      {isCurrent ? (
-                        "현재 플랜"
-                      ) : (
-                        <>
-                          <CreditCard className="mr-1 h-3.5 w-3.5" />
-                          {planId === "free" ? "다운그레이드" : "업그레이드"}
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Enterprise */}
-          <div className="mt-4 rounded-lg border border-dashed p-4 text-center">
-            <p className="text-sm font-medium">Enterprise</p>
-            <p className="text-xs text-muted-foreground">
-              무제한 사용, 전담 매니저, SLA 보장, 커스텀 구성
-            </p>
-            <Button variant="outline" size="sm" className="mt-2">
-              영업팀 문의
-            </Button>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {PLANS.map((plan) => (
+              <PricingCard
+                key={plan.id}
+                plan={plan}
+                yearly={yearly}
+                currentPlan={subscription.planId}
+              />
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -272,19 +187,10 @@ function UsageBar({
       <div className="flex items-center justify-between text-sm">
         <span>{label}</span>
         <span className={isNearLimit ? "text-orange-600 font-medium" : "text-muted-foreground"}>
-          {used} / {limit >= 9999 ? "무제한" : limit}
+          {used} / {limit >= 999 ? "무제한" : limit}
         </span>
       </div>
       <Progress value={percentage} className="h-2" />
     </div>
-  );
-}
-
-function PlanFeature({ text }: { text: string }) {
-  return (
-    <li className="flex items-center gap-1.5">
-      <Check className="h-3 w-3 text-primary shrink-0" />
-      <span>{text}</span>
-    </li>
   );
 }

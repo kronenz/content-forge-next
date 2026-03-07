@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { getPlan, PLANS, type PlanId } from "@/server/services/subscription";
+import { getPlan, type PlanId } from "@/server/services/subscription";
 import { useState } from "react";
 import { Crown, Settings2 } from "lucide-react";
 

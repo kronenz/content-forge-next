@@ -42,7 +42,7 @@ export function CommandPalette() {
       label: "대시보드",
       description: "대시보드로 이동",
       icon: LayoutDashboard,
-      action: () => router.push("/"),
+      action: () => router.push("/dashboard"),
       keywords: ["home", "dashboard"],
     },
     {
@@ -122,32 +122,34 @@ export function CommandPalette() {
       })
     : commands;
 
+  const handleOpenChange = useCallback((isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      setQuery("");
+      setSelectedIndex(0);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, []);
+
+  const handleQueryChange = useCallback((value: string) => {
+    setQuery(value);
+    setSelectedIndex(0);
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setOpen((prev) => !prev);
+        handleOpenChange(!open);
       }
     },
-    [],
+    [open, handleOpenChange],
   );
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
-
-  useEffect(() => {
-    if (open) {
-      setQuery("");
-      setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [open]);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
 
   function handleItemKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowDown") {
@@ -167,14 +169,14 @@ export function CommandPalette() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-lg p-0 overflow-hidden">
         <div className="flex items-center border-b px-3">
           <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
           <Input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleQueryChange(e.target.value)}
             onKeyDown={handleItemKeyDown}
             placeholder="명령어 검색... (Cmd+K)"
             className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-12"
