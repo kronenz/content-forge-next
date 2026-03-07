@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"bunx shadcn@latest init -d --style default --base-color neutral 2>&1\",\"timeout\":60000,\"description\":\"Initialize shadcn/ui with defaults\"}",
+  "error": "Exit code 1\nResolving dependencies\nResolved, downloaded and extracted [990]\nSaved lockfile\nerror: unknown option '--style'",
+  "timestamp": "2026-03-07T03:50:29.674Z",
+  "retry_count": 6
+}

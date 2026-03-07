@@ -1,0 +1,3 @@
+module.exports=[50645,a=>{a.n(a.i(27572))},43619,a=>{a.n(a.i(79962))},13718,a=>{a.n(a.i(85523))},18198,a=>{a.n(a.i(45518))},60168,a=>{"use strict";var b=a.i(7997);function c(){return(0,b.jsxs)("main",{className:"flex min-h-screen flex-col items-center justify-center",children:[(0,b.jsx)("h1",{className:"text-4xl font-bold",children:"Content Forge"}),(0,b.jsx)("p",{className:"mt-4 text-lg text-gray-600",children:"AI Agent 기반 콘텐츠 수집-가공-발행 자동화 플랫폼"})]})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=_a11b82c4._.js.map

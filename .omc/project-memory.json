@@ -1,0 +1,230 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1772852596220,
+  "projectRoot": "/home/bsh/develop/content-forge-next",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {},
+  "hotPaths": [
+    {
+      "path": "package.json",
+      "accessCount": 4,
+      "lastAccessed": 1772855359245,
+      "type": "file"
+    },
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 3,
+      "lastAccessed": 1772855084394,
+      "type": "file"
+    },
+    {
+      "path": "docs/AGENTS.md",
+      "accessCount": 3,
+      "lastAccessed": 1772855097096,
+      "type": "file"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "accessCount": 3,
+      "lastAccessed": 1772855400007,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/00-overview.md",
+      "accessCount": 2,
+      "lastAccessed": 1772854332526,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 2,
+      "lastAccessed": 1772855316856,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/env.ts",
+      "accessCount": 2,
+      "lastAccessed": 1772855330901,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853635138,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/01-architecture.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853695018,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/02-source-collection.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853723209,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/03-ai-agent-pipeline.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853775872,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/04-content-publishing.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853813831,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/05-platform-preview.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853862157,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/06-quality-review.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853911929,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/07-ui-ux.md",
+      "accessCount": 1,
+      "lastAccessed": 1772853998280,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/08-business-model.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854032385,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/09-tech-stack.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854074122,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/10-roadmap.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854112161,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/11-seo-strategy.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854323310,
+      "type": "file"
+    },
+    {
+      "path": "docs/prd/IMPLEMENTATION_TRACKER.md",
+      "accessCount": 1,
+      "lastAccessed": 1772854510813,
+      "type": "file"
+    },
+    {
+      "path": "Dockerfile",
+      "accessCount": 1,
+      "lastAccessed": 1772854902024,
+      "type": "file"
+    },
+    {
+      "path": "docker-compose.yml",
+      "accessCount": 1,
+      "lastAccessed": 1772854905594,
+      "type": "file"
+    },
+    {
+      "path": "docker-compose.test.yml",
+      "accessCount": 1,
+      "lastAccessed": 1772854908294,
+      "type": "file"
+    },
+    {
+      "path": "Makefile",
+      "accessCount": 1,
+      "lastAccessed": 1772854911817,
+      "type": "file"
+    },
+    {
+      "path": ".env.example",
+      "accessCount": 1,
+      "lastAccessed": 1772854915498,
+      "type": "file"
+    },
+    {
+      "path": "lighthouserc.json",
+      "accessCount": 1,
+      "lastAccessed": 1772854918375,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1772855292622,
+      "type": "file"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "accessCount": 1,
+      "lastAccessed": 1772855293893,
+      "type": "file"
+    },
+    {
+      "path": "src/app/globals.css",
+      "accessCount": 1,
+      "lastAccessed": 1772855294435,
+      "type": "file"
+    },
+    {
+      "path": ".prettierrc",
+      "accessCount": 1,
+      "lastAccessed": 1772855297123,
+      "type": "file"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772855333173,
+      "type": "file"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1772855334304,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
