@@ -14,6 +14,8 @@ services:
       - DATABASE_URL=postgresql://test:test@postgres:5432/content_forge_test
       - REDIS_URL=redis://redis:6379
       - NODE_ENV=test
+      - NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
 
   postgres:
     image: postgres:16-alpine

@@ -71,6 +71,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/content_forge_test
           REDIS_URL: redis://localhost:6379
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
 
   build:
     name: Build
@@ -88,6 +90,12 @@ jobs:
 
       - name: Build
         run: bun run build
+        env:
+          NEXT_PHASE: phase-production-build
+          DATABASE_URL: "https://placeholder.db"
+          REDIS_URL: "https://placeholder.redis"
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
 
   docker:
     name: Docker Build Test
@@ -107,6 +115,8 @@ jobs:
           tags: content-forge:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PHASE=phase-production-build
 
   lighthouse:
     name: Lighthouse CI
@@ -125,9 +135,20 @@ jobs:
 
       - name: Build
         run: bun run build
+        env:
+          NEXT_PHASE: phase-production-build
+          DATABASE_URL: "https://placeholder.db"
+          REDIS_URL: "https://placeholder.redis"
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: ./lighthouserc.json
           uploadArtifacts: true
+        env:
+          DATABASE_URL: "https://placeholder.db"
+          REDIS_URL: "https://placeholder.redis"
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
