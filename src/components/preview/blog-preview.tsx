@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import type { PreviewProps } from "@/types/preview";
 
@@ -15,11 +16,13 @@ export function BlogPreview({ content, author }: PreviewProps) {
     <article className="mx-auto max-w-3xl bg-white dark:bg-zinc-900 rounded-lg shadow-sm overflow-hidden">
       {/* Hero Image */}
       {content.images?.[0] ? (
-        <div className="aspect-[1200/630] w-full bg-muted overflow-hidden">
-          <img
+        <div className="relative aspect-[1200/630] w-full bg-muted overflow-hidden">
+          <Image
             src={content.images[0]}
             alt={content.title}
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
+            unoptimized
           />
         </div>
       ) : (

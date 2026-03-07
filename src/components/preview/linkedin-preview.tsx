@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PreviewProps } from "@/types/preview";
@@ -90,11 +91,13 @@ export function LinkedInPreview({ content, author }: PreviewProps) {
 
         {/* Attached image */}
         {content.images?.[0] && (
-          <div className="mt-1">
-            <img
+          <div className="mt-1 relative w-full aspect-video">
+            <Image
               src={content.images[0]}
               alt="Attachment"
-              className="w-full object-cover"
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
         )}

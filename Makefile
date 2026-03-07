@@ -1,5 +1,6 @@
 .PHONY: dev build test test-docker up down clean lint typecheck db-push db-studio \
-       ci ci-quick ci-test ci-build ci-docker setup-runner setup-hooks
+       ci ci-quick ci-test ci-build ci-docker setup-runner setup-hooks \
+       prod-up prod-down prod-build prod-logs
 
 # Local development
 dev:
@@ -69,6 +70,19 @@ logs:
 
 logs-app:
 	docker compose logs -f app
+
+# Production
+prod-up:
+	docker compose -f docker-compose.prod.yml up -d --build
+
+prod-down:
+	docker compose -f docker-compose.prod.yml down
+
+prod-build:
+	docker compose -f docker-compose.prod.yml build
+
+prod-logs:
+	docker compose -f docker-compose.prod.yml logs -f
 
 # Setup
 setup-runner:

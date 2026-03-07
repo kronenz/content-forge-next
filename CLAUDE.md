@@ -209,6 +209,8 @@ VERCEL_PROJECT_ID
 - `Dockerfile` - 멀티스테이지 빌드 (deps → builder → runner)
 - `docker-compose.yml` - 로컬 개발 (app + Postgres + Redis)
 - `docker-compose.test.yml` - 테스트 전용 (일회성 실행)
+- `docker-compose.prod.yml` - 프로덕션 배포 (restart policy, healthcheck, 리소스 제한)
+- `.env.production.example` - 프로덕션 환경 변수 템플릿
 
 ### Makefile 명령어
 ```bash
@@ -238,6 +240,12 @@ make db-push       # Drizzle 스키마를 DB에 반영
 make db-studio     # Drizzle Studio 실행 (DB GUI)
 make db-generate   # Drizzle 마이그레이션 생성
 make db-migrate    # Drizzle 마이그레이션 실행
+
+# 프로덕션
+make prod-up       # 프로덕션 Docker 스택 빌드+실행
+make prod-down     # 프로덕션 Docker 중지
+make prod-build    # 프로덕션 Docker 이미지 빌드
+make prod-logs     # 프로덕션 로그 확인
 
 # 기타
 make logs          # Docker 로그 확인
