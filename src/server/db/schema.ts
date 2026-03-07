@@ -85,6 +85,9 @@ export const sources = pgTable("sources", {
   schedule: text("schedule"), // cron expression
   processingPrompt: text("processing_prompt"),
   groupName: text("group_name"),
+  tags: jsonb("tags").$type<string[]>(),
+  priority: text("priority").notNull().default("medium"),
+  filters: jsonb("filters").$type<{ keywords?: string[]; exclude?: string[] }>(),
   isActive: integer("is_active").notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
