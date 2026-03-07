@@ -1,0 +1,63 @@
+{
+  "$schema": "../schemas/contract.schema.json",
+  "contract_id": "frontend-backend",
+  "version": "1.0.0",
+  "description": "Frontend Agent와 Backend API Agent 간의 인터페이스 계약",
+
+  "parties": {
+    "provider": "backend-api",
+    "consumer": "frontend"
+  },
+
+  "interfaces": {
+    "trpc_client": {
+      "description": "tRPC React 클라이언트를 통한 타입 안전 API 호출",
+      "location": "src/lib/trpc.ts",
+      "protocol": "tRPC v11 + TanStack Query",
+      "rules": [
+        "Frontend는 trpc hooks (useQuery, useMutation)로만 서버 데이터 접근",
+        "Server Component에서는 createCaller로 직접 호출 가능",
+        "클라이언트 상태(Zustand)와 서버 상태(TanStack Query) 분리 유지"
+      ]
+    },
+    "type_sharing": {
+      "description": "서버-클라이언트 간 공유 타입",
+      "location": "src/types/",
+      "rules": [
+        "AppRouter 타입은 @/server/api/root에서 자동 추론",
+        "UI 전용 타입은 src/types/ui.ts에 별도 정의",
+        "DB 스키마 타입을 UI에서 직접 import하지 않음 — API 응답 타입 사용"
+      ]
+    }
+  },
+
+  "data_flow": [
+    {
+      "name": "source-list",
+      "direction": "backend → frontend",
+      "endpoint": "trpc.source.list",
+      "returns": "Source[]",
+      "used_in": ["src/app/(dashboard)/sources/page.tsx"]
+    },
+    {
+      "name": "pipeline-monitor",
+      "direction": "backend → frontend",
+      "endpoint": "trpc.pipeline.byId",
+      "returns": "PipelineRun with steps and processedContents",
+      "used_in": ["src/app/(dashboard)/pipeline/[id]/page.tsx"]
+    },
+    {
+      "name": "analytics-overview",
+      "direction": "backend → frontend",
+      "endpoint": "trpc.analytics.overview",
+      "returns": "{ sources, rawContents, pipelineRuns, processedContents, publications }",
+      "used_in": ["src/app/(dashboard)/page.tsx"]
+    }
+  ],
+
+  "constraints": [
+    "Frontend는 src/server/ 내부 모듈을 직접 import하지 않음 (tRPC 경유만 허용)",
+    "Server Component에서 DB 직접 접근 시 src/server/api/root.ts의 createCaller 사용",
+    "env 변수 중 NEXT_PUBLIC_ 접두사만 클라이언트에서 접근 가능"
+  ]
+}

@@ -37,4 +37,16 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
-export const env = envSchema.parse(process.env);
+function parseEnv() {
+  // Skip validation during build time when env vars are not available
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return envSchema.parse({
+      DATABASE_URL: "https://placeholder.db",
+      REDIS_URL: "https://placeholder.redis",
+      ...process.env,
+    });
+  }
+  return envSchema.parse(process.env);
+}
+
+export const env = parseEnv();

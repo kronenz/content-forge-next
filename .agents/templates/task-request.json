@@ -1,0 +1,62 @@
+{
+  "$schema": "../schemas/task.schema.json",
+  "description": "메인 세션이 subagent에게 작업을 위임할 때 사용하는 템플릿",
+
+  "template": {
+    "task_id": "{auto-generated}",
+    "agent": "{agent-id from registry}",
+    "pipeline": "{pipeline-id}",
+    "phase": "{current phase}",
+
+    "context": {
+      "issue": "#{issue_number}",
+      "prd_refs": ["docs/prd/{relevant}.md"],
+      "contracts": [".agents/contracts/{relevant}.json"],
+      "related_files": ["paths to read before starting"]
+    },
+
+    "instruction": "{구체적인 작업 지시}",
+
+    "constraints": [
+      "수정 가능한 디렉토리: {agent.writes}",
+      "참조만 가능: {agent.reads}",
+      "수정 금지: {다른 에이전트 scope}"
+    ],
+
+    "acceptance_criteria": [
+      "lint 통과",
+      "typecheck 통과",
+      "{기능별 구체적 조건}"
+    ],
+
+    "output": {
+      "modified_files": [],
+      "summary": "",
+      "issues_found": []
+    }
+  },
+
+  "example": {
+    "task_id": "task-003-api",
+    "agent": "backend-api",
+    "pipeline": "full-stack-feature",
+    "phase": "parallel-impl",
+    "context": {
+      "issue": "#6",
+      "prd_refs": ["docs/prd/02-source-collection.md"],
+      "contracts": [".agents/contracts/frontend-backend.json", ".agents/contracts/backend-db.json"],
+      "related_files": ["src/server/db/schema.ts", "src/server/api/routers/source.ts"]
+    },
+    "instruction": "Source CRUD tRPC 라우터를 구현하라. list에 pagination과 필터(type, groupName)를 추가하고, create시 schedule 유효성(cron expression) 검증을 추가하라.",
+    "constraints": [
+      "수정 가능: src/server/api/routers/source.ts",
+      "참조만: src/server/db/schema.ts, src/lib/",
+      "DB 스키마 수정 필요 시 결과에 issues_found로 보고"
+    ],
+    "acceptance_criteria": [
+      "lint 통과",
+      "typecheck 통과",
+      "Source CRUD 4개 엔드포인트 동작"
+    ]
+  }
+}

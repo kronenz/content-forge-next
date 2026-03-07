@@ -1,0 +1,67 @@
+{
+  "$schema": "../schemas/contract.schema.json",
+  "contract_id": "backend-ai",
+  "version": "1.0.0",
+  "description": "Backend API Agent와 AI Pipeline Agent 간의 인터페이스 계약",
+
+  "parties": {
+    "provider": "ai-pipeline",
+    "consumers": ["backend-api"]
+  },
+
+  "interfaces": {
+    "pipeline_trigger": {
+      "description": "파이프라인 실행 트리거",
+      "location": "src/server/pipeline/",
+      "protocol": "함수 호출 (BullMQ job enqueue)",
+      "input": {
+        "rawContentId": "string (UUID)",
+        "config": "PipelineConfig (optional, custom agent chain)"
+      },
+      "output": {
+        "pipelineRunId": "string (UUID)",
+        "status": "pending | running | completed | failed | cancelled"
+      }
+    },
+    "agent_results": {
+      "description": "각 AI Agent의 실행 결과",
+      "location": "src/server/agents/",
+      "storage": "pipelineSteps 테이블 (input/output jsonb)",
+      "agent_outputs": {
+        "analyst": "AnalysisReport (summary, key_insights, topics, sentiment)",
+        "writer": "DraftContents (blog, linkedin, twitter, instagram 별 초안)",
+        "editor": "EditedContents + EditReport (5대 품질 지표 포함)",
+        "designer": "DesignSpecs (이미지 생성 지시)",
+        "seo_optimizer": "SEOReport (키워드, 메타데이터, 구조화 데이터)",
+        "fact_checker": "FactCheckReport (검증 결과, 신뢰도)",
+        "compliance": "ComplianceReport (저작권, 정책 준수)",
+        "localizer": "LocalizedContents (현지화된 콘텐츠)",
+        "platform_formatter": "FormattedContents (플랫폼별 최종 포맷)"
+      }
+    }
+  },
+
+  "event_flow": {
+    "description": "파이프라인 이벤트 (실시간 모니터링용)",
+    "events": [
+      "pipeline.created",
+      "pipeline.started",
+      "pipeline.step.started",
+      "pipeline.step.completed",
+      "pipeline.step.failed",
+      "pipeline.completed",
+      "pipeline.failed",
+      "pipeline.cancelled"
+    ],
+    "transport": "WebSocket (향후 구현)",
+    "reference": "docs/prd/01-architecture.md 이벤트 목록"
+  },
+
+  "constraints": [
+    "AI Agent 호출은 반드시 Vercel AI SDK (generateText/streamText) 사용",
+    "Agent 구현은 src/server/agents/ 내에서만",
+    "파이프라인 오케스트레이션은 src/server/pipeline/ 내에서만",
+    "Agent 입출력 스펙은 docs/prd/03-ai-agent-pipeline.md 기준 준수",
+    "각 Agent의 출력은 pipelineSteps.output에 jsonb로 기록"
+  ]
+}

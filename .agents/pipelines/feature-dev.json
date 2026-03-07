@@ -1,0 +1,54 @@
+{
+  "$schema": "../schemas/pipeline.schema.json",
+  "pipeline_id": "feature-dev",
+  "name": "기능 개발 파이프라인",
+  "description": "단일 도메인 기능 개발 시 사용. 한 에이전트가 주도하고 의존 에이전트가 지원",
+  "trigger": "GitHub Issue (type:feature)",
+
+  "phases": [
+    {
+      "phase": "plan",
+      "description": "기획 확인 및 작업 분해",
+      "executor": "orchestrator",
+      "steps": [
+        "gh issue view {issue_number} 로 이슈 상세 확인",
+        "관련 PRD 문서 읽기",
+        "작업을 sub-task로 분해",
+        "어떤 에이전트가 필요한지 결정"
+      ]
+    },
+    {
+      "phase": "implement",
+      "description": "구현",
+      "executor": "assigned-agent",
+      "steps": [
+        "AGENTS.md 지침에 따라 구현",
+        "관련 contract에서 인터페이스 확인",
+        "의존 모듈은 read-only로 참조"
+      ]
+    },
+    {
+      "phase": "verify",
+      "description": "검증",
+      "executor": "orchestrator",
+      "steps": [
+        "bun run lint",
+        "bun run typecheck",
+        "bun run test",
+        "bun run build"
+      ],
+      "pass_criteria": "모든 검증 통과"
+    },
+    {
+      "phase": "commit",
+      "description": "커밋 및 PR",
+      "executor": "orchestrator",
+      "steps": [
+        "feat/#{issue_number}-{description} 브랜치",
+        "커밋 메시지에 #{issue_number} 포함",
+        "gh pr create --body 'Closes #{issue_number}'",
+        "IMPLEMENTATION_TRACKER.md 업데이트"
+      ]
+    }
+  ]
+}

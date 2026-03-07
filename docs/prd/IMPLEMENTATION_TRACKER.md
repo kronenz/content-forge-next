@@ -14,11 +14,12 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
   - 유틸: `src/lib/env.ts` (Zod v4), `src/lib/utils.ts`
   - UI: `src/components/ui/button.tsx` (shadcn)
   - 참고: Next.js 16 (latest), Tailwind CSS 4, shadcn/ui, ESLint 9
-- [ ] Drizzle ORM 스키마 설계
-  - 파일: -
-  - 체크: Source, RawContent, PipelineRun, PipelineStep, ProcessedContent, Review, Publication 엔티티가 `01-architecture.md` 도메인 모델과 일치하는가?
-- [ ] tRPC 라우터 기본 구조
-  - 파일: -
+- [x] Drizzle ORM 스키마 설계
+  - 파일: `src/server/db/schema.ts`, `src/server/db/index.ts`, `src/lib/db.ts`, `drizzle.config.ts`, `drizzle/0000_curved_gravity.sql`
+  - 체크: Source, RawContent, PipelineRun, PipelineStep, ProcessedContent, Review, Publication 엔티티가 `01-architecture.md` 도메인 모델과 일치하는가? ✅
+- [x] tRPC 라우터 기본 구조
+  - 파일: `src/server/api/trpc.ts` (context, procedures), `src/server/api/root.ts` (root router), `src/server/api/routers/{source,pipeline,content,review,publish,analytics}.ts`, `src/app/api/trpc/[trpc]/route.ts` (API handler), `src/lib/trpc.ts` (React client), `src/components/providers.tsx` (TanStack Query + tRPC provider)
+  - tRPC v11, @tanstack/react-query, superjson, publicProcedure + protectedProcedure
 - [ ] Supabase Auth 연동
   - 파일: -
 - [ ] 대시보드 기본 레이아웃
