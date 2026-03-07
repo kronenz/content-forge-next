@@ -1,13 +1,22 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 
-export function createTRPCContext(opts: { headers: Headers }) {
-  // TODO: Supabase Auth 연동 시 세션 추출
+export async function createTRPCContext(opts: { headers: Headers }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const session = user
+    ? { userId: user.id, email: user.email ?? "" }
+    : null;
+
   return {
     db,
     headers: opts.headers,
-    session: null as { userId: string } | null,
+    session,
   };
 }
 

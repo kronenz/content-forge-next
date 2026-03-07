@@ -8,8 +8,8 @@ const envSchema = z.object({
   REDIS_URL: z.url(),
 
   // Supabase
-  NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
   // AI
@@ -43,6 +43,8 @@ function parseEnv() {
     return envSchema.parse({
       DATABASE_URL: "https://placeholder.db",
       REDIS_URL: "https://placeholder.redis",
+      NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key",
       ...process.env,
     });
   }
