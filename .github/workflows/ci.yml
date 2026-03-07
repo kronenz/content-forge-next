@@ -22,6 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system dependencies (self-hosted)
+        if: ${{ !contains(runner.name, 'GitHub Actions') }}
+        run: |
+          which unzip > /dev/null 2>&1 || sudo apt-get update && sudo apt-get install -y unzip
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -71,6 +76,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install system dependencies (self-hosted)
+        if: ${{ !contains(runner.name, 'GitHub Actions') }}
+        run: |
+          which unzip > /dev/null 2>&1 || sudo apt-get update && sudo apt-get install -y unzip
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -99,6 +109,11 @@ jobs:
     needs: [lint-and-typecheck, test]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install system dependencies (self-hosted)
+        if: ${{ !contains(runner.name, 'GitHub Actions') }}
+        run: |
+          which unzip > /dev/null 2>&1 || sudo apt-get update && sudo apt-get install -y unzip
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -151,6 +166,11 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install system dependencies (self-hosted)
+        if: ${{ !contains(runner.name, 'GitHub Actions') }}
+        run: |
+          which unzip > /dev/null 2>&1 || sudo apt-get update && sudo apt-get install -y unzip
 
       - uses: oven-sh/setup-bun@v2
         with:
