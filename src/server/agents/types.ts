@@ -134,7 +134,102 @@ export interface FormattedContents {
 // Agent common types
 // ============================================================
 
-export type AgentRole = "analyst" | "writer" | "editor" | "platform_formatter";
+// ============================================================
+// Research Agent
+// ============================================================
+
+export interface ResearchSource {
+  title: string;
+  url: string;
+  relevance: "high" | "medium" | "low";
+  snippet: string;
+}
+
+export interface ResearchReport {
+  query: string;
+  sources: ResearchSource[];
+  synthesis: string;
+  key_facts: string[];
+  data_points: { label: string; value: string; source: string }[];
+  gaps: string[];
+}
+
+// ============================================================
+// SEO Optimizer Agent
+// ============================================================
+
+export interface SEOKeyword {
+  keyword: string;
+  search_volume: "high" | "medium" | "low";
+  difficulty: "high" | "medium" | "low";
+  placement: string;
+}
+
+export interface SEOReport {
+  meta_title: string;
+  meta_description: string;
+  primary_keyword: string;
+  secondary_keywords: string[];
+  keyword_analysis: SEOKeyword[];
+  content_suggestions: string[];
+  readability_score: number;
+  seo_score: number;
+  internal_links: string[];
+  schema_markup: string;
+}
+
+// ============================================================
+// Fact Checker Agent
+// ============================================================
+
+export interface FactCheckItem {
+  claim: string;
+  verdict: "verified" | "unverified" | "false" | "misleading" | "needs_context";
+  confidence: number;
+  source: string;
+  explanation: string;
+}
+
+export interface FactCheckReport {
+  overall_accuracy: number;
+  items: FactCheckItem[];
+  warnings: string[];
+  recommendations: string[];
+}
+
+// ============================================================
+// Compliance Agent
+// ============================================================
+
+export interface ComplianceIssue {
+  type: "copyright" | "trademark" | "privacy" | "defamation" | "disclosure" | "regulation";
+  severity: "critical" | "warning" | "info";
+  description: string;
+  location: string;
+  suggestion: string;
+}
+
+export interface ComplianceReport {
+  passed: boolean;
+  overall_risk: "low" | "medium" | "high";
+  issues: ComplianceIssue[];
+  disclosures_needed: string[];
+  recommendations: string[];
+}
+
+// ============================================================
+// Agent common types
+// ============================================================
+
+export type AgentRole =
+  | "analyst"
+  | "writer"
+  | "editor"
+  | "platform_formatter"
+  | "researcher"
+  | "seo_optimizer"
+  | "fact_checker"
+  | "compliance";
 
 export interface AgentResult<T> {
   role: AgentRole;
