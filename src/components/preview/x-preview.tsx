@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PreviewProps } from "@/types/preview";
@@ -72,11 +73,13 @@ function Tweet({ content, author, index, total, isThread, images }: TweetProps) 
           </p>
         )}
         {images && images.length > 0 && (
-          <div className="mt-3 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
-            <img
-              src={images[0]}
+          <div className="mt-3 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 relative aspect-video">
+            <Image
+              src={images[0]!}
               alt="Media"
-              className="w-full object-cover max-h-72"
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
         )}

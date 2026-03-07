@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Pre-push hook: runs quick CI checks (lint + typecheck) before push
+# Skip with: git push --no-verify
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+BOLD='\033[1m'
+
+echo -e "${CYAN}${BOLD}[pre-push] Running quick CI checks...${NC}"
+
+SCRIPT_DIR="$(git rev-parse --show-toplevel)/scripts"
+
+if [[ -x "$SCRIPT_DIR/ci-local.sh" ]]; then
+  "$SCRIPT_DIR/ci-local.sh" quick
+else
+  echo -e "${CYAN}Running lint + typecheck...${NC}"
+  bun run lint && bun run typecheck
+fi
+
+echo -e "${GREEN}${BOLD}[pre-push] All checks passed. Pushing...${NC}"

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { PreviewProps } from "@/types/preview";
@@ -53,7 +54,7 @@ export function InstagramPreview({ content, author }: PreviewProps) {
         </div>
         <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-gradient-to-b from-purple-900 to-pink-900">
           {images[0] ? (
-            <img src={images[0]} alt="Story" className="h-full w-full object-cover" />
+            <Image src={images[0]} alt="Story" fill className="object-cover" unoptimized />
           ) : (
             <div className="flex h-full items-center justify-center p-8 text-center text-white text-lg font-medium">
               {content.title}
@@ -99,7 +100,7 @@ export function InstagramPreview({ content, author }: PreviewProps) {
         </div>
         <div className="relative aspect-[9/16] rounded-xl overflow-hidden bg-black">
           {images[0] ? (
-            <img src={images[0]} alt="Reel" className="h-full w-full object-cover" />
+            <Image src={images[0]} alt="Reel" fill className="object-cover" unoptimized />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-b from-zinc-800 to-zinc-950">
               <span className="text-2xl font-bold text-white/20">9:16</span>
@@ -168,10 +169,12 @@ export function InstagramPreview({ content, author }: PreviewProps) {
         {/* Carousel */}
         <div className="relative aspect-square bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
           {images.length > 0 ? (
-            <img
-              src={images[currentSlide] ?? images[0]}
+            <Image
+              src={images[currentSlide] ?? images[0]!}
               alt={`Slide ${currentSlide + 1}`}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              unoptimized
             />
           ) : (
             <div className="flex h-full items-center justify-center">
