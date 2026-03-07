@@ -163,6 +163,31 @@ gh project item-list 7 --owner kronenz     # 프로젝트 아이템 목록
 | `.github/workflows/ci.yml` | PR, push to main | lint → typecheck → test(Postgres+Redis) → build → docker build → lighthouse(PR only) |
 | `.github/workflows/deploy.yml` | push to main | Vercel 프로덕션 배포 |
 
+### Self-Hosted Runner (온프렘)
+- **서버**: `minikube-01` (192.168.101.193)
+- **Runner 이름**: `content-forge-local` (라벨: `self-hosted,linux,x64,on-prem`)
+- **서비스**: `systemctl --user {status|stop|restart} actions-runner`
+- **로그**: `journalctl --user -u actions-runner -f`
+- CI workflow는 기본으로 self-hosted runner 사용. GitHub repo variable `CI_RUNNER=ubuntu-latest` 설정하면 클라우드 runner로 전환 가능
+- Runner 재설치: `make setup-runner`
+
+### 로컬 CI 파이프라인
+GitHub Actions CI를 로컬에서 미러링하는 스크립트 (`scripts/ci-local.sh`).
+Claude 대화에서 `make ci` 결과만 확인하면 lint/typecheck/test 개별 실행 불필요.
+
+```bash
+make ci            # 전체 CI (lint → typecheck → test → build → docker)
+make ci-quick      # 빠른 검증 (lint + typecheck, ~10초)
+make ci-test       # 테스트만 (Docker PG+Redis 자동 실행/종료)
+make ci-build      # Next.js 빌드만
+make ci-docker     # Docker 이미지 빌드만
+```
+
+### Git Hooks (`.githooks/`)
+- **pre-push**: push 전 자동으로 lint + typecheck 실행 (실패 시 push 차단)
+- 스킵: `git push --no-verify`
+- 설정: `make setup-hooks` (또는 `git config core.hooksPath .githooks`)
+
 ### CI 통과 조건
 - `bun run lint` 통과
 - `bun run typecheck` 통과
@@ -187,21 +212,37 @@ VERCEL_PROJECT_ID
 
 ### Makefile 명령어
 ```bash
+# 로컬 개발
 make dev           # 로컬 개발 서버 (bun dev)
 make build         # 프로덕션 빌드
 make lint          # ESLint 실행
 make typecheck     # TypeScript 타입 체크
 make test          # 로컬 테스트 실행
+
+# CI 파이프라인 (로컬)
+make ci            # 전체 CI (lint → typecheck → test → build → docker)
+make ci-quick      # 빠른 검증 (lint + typecheck)
+make ci-test       # 테스트만 (Docker PG+Redis 포함)
+make ci-build      # Next.js 빌드만
+make ci-docker     # Docker 이미지 빌드만
+
+# Docker
 make up            # Docker 전체 스택 실행 (app + postgres + redis)
 make up-build      # Docker 빌드 후 실행
 make down          # Docker 중지
 make test-docker   # Docker로 테스트 실행 (DB+Redis 포함, 일회성)
 make clean         # Docker 중지 + 볼륨 삭제
+
+# 데이터베이스
 make db-push       # Drizzle 스키마를 DB에 반영
 make db-studio     # Drizzle Studio 실행 (DB GUI)
 make db-generate   # Drizzle 마이그레이션 생성
 make db-migrate    # Drizzle 마이그레이션 실행
+
+# 기타
 make logs          # Docker 로그 확인
+make setup-runner  # Self-hosted runner 설치/재설치
+make setup-hooks   # Git hooks 설정
 ```
 
 ### Docker 서비스 포트
@@ -231,11 +272,11 @@ make logs          # Docker 로그 확인
 2. 브랜치 생성: git checkout -b feat/#{번호}-설명
 3. PRD 읽기: 이슈에 명시된 PRD 문서 확인
 4. 구현
-5. 로컬 검증: make lint && make typecheck && make test
-6. Docker 검증 (필요 시): make test-docker
-7. 커밋: 메시지에 #{번호} 포함
+5. 로컬 CI 검증: make ci-quick (빠른 검증) 또는 make ci (전체 CI)
+6. 커밋: 메시지에 #{번호} 포함
+7. Push: pre-push hook이 자동으로 lint + typecheck 실행
 8. PR 생성: gh pr create --title "feat: ..." --body "Closes #{번호}"
-9. CI 통과 확인
+9. CI 통과 확인 (self-hosted runner가 로컬에서 실행)
 10. 머지 후: IMPLEMENTATION_TRACKER.md 해당 항목 체크 + 파일 경로 기록
 ```
 

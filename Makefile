@@ -1,4 +1,5 @@
-.PHONY: dev build test test-docker up down clean lint typecheck db-push db-studio
+.PHONY: dev build test test-docker up down clean lint typecheck db-push db-studio \
+       ci ci-quick ci-test ci-build ci-docker setup-runner setup-hooks
 
 # Local development
 dev:
@@ -15,6 +16,22 @@ typecheck:
 
 test:
 	bun run test
+
+# CI Pipeline (local)
+ci:
+	./scripts/ci-local.sh full
+
+ci-quick:
+	./scripts/ci-local.sh quick
+
+ci-test:
+	./scripts/ci-local.sh test
+
+ci-build:
+	./scripts/ci-local.sh build
+
+ci-docker:
+	./scripts/ci-local.sh docker
 
 # Docker
 up:
@@ -52,3 +69,11 @@ logs:
 
 logs-app:
 	docker compose logs -f app
+
+# Setup
+setup-runner:
+	./scripts/setup-runner.sh
+
+setup-hooks:
+	git config core.hooksPath .githooks
+	@echo "Git hooks configured to use .githooks/"
