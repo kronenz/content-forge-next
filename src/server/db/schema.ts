@@ -60,6 +60,7 @@ export const platformEnum = pgEnum("platform", [
 export const reviewStatusEnum = pgEnum("review_status", [
   "pending",
   "approved",
+  "revision",
   "rejected",
 ]);
 
@@ -163,6 +164,9 @@ export const processedContents = pgTable("processed_contents", {
 
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
+  pipelineRunId: uuid("pipeline_run_id").references(() => pipelineRuns.id, {
+    onDelete: "set null",
+  }),
   processedContentId: uuid("processed_content_id")
     .notNull()
     .references(() => processedContents.id, { onDelete: "cascade" }),
@@ -174,6 +178,16 @@ export const reviews = pgTable("reviews", {
   platformFitScore: real("platform_fit_score"),
   cultureFitScore: real("culture_fit_score"),
   feedback: text("feedback"),
+  inlineComments:
+    jsonb("inline_comments").$type<
+      Array<{
+        id: string;
+        selectedText: string;
+        comment: string;
+        position: { start: number; end: number };
+        createdAt: string;
+      }>
+    >(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -250,6 +264,10 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
   processedContent: one(processedContents, {
     fields: [reviews.processedContentId],
     references: [processedContents.id],
+  }),
+  pipelineRun: one(pipelineRuns, {
+    fields: [reviews.pipelineRunId],
+    references: [pipelineRuns.id],
   }),
 }));
 
