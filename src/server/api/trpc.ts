@@ -4,6 +4,15 @@ import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
 export async function createTRPCContext(opts: { headers: Headers }) {
+  // Dev mode: use dummy session to bypass auth
+  if (process.env.NODE_ENV === "development") {
+    return {
+      db,
+      headers: opts.headers,
+      session: { userId: "dev-user-00000000-0000-0000-0000-000000000000", email: "dev@localhost" },
+    };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

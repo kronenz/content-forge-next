@@ -26,6 +26,11 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
+  // Skip auth check in development
+  if (process.env.NODE_ENV === "development") {
+    return supabaseResponse;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,7 +38,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require auth
-  const publicRoutes = ["/", "/login", "/signup", "/auth/callback"];
+  const publicRoutes = ["/", "/login", "/signup", "/auth/callback", "/pricing"];
   const isPublicRoute = publicRoutes.some(
     (route) => pathname === route || pathname.startsWith("/auth/"),
   );

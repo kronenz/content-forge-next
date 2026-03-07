@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql, eq, desc } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import {
   sources,
@@ -6,6 +6,7 @@ import {
   pipelineRuns,
   processedContents,
   publications,
+  reviews,
 } from "@/server/db/schema";
 import { computeTrustLevel } from "@/server/services/auto-approval";
 
@@ -33,6 +34,48 @@ export const analyticsRouter = createTRPCRouter({
       pipelineRuns: Number(pipelineCount?.count ?? 0),
       processedContents: Number(contentCount?.count ?? 0),
       publications: Number(pubCount?.count ?? 0),
+    };
+  }),
+
+  dashboard: publicProcedure.query(async ({ ctx }) => {
+    const [rawCount] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(rawContents);
+    const [processingCount] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(pipelineRuns)
+      .where(sql`${pipelineRuns.status} in ('pending', 'running')`);
+    const [pendingReviewCount] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(reviews)
+      .where(eq(reviews.status, "pending"));
+    const [publishedCount] = await ctx.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(publications)
+      .where(eq(publications.status, "published"));
+
+    const recentPipelines = await ctx.db.query.pipelineRuns.findMany({
+      orderBy: [desc(pipelineRuns.createdAt)],
+      limit: 5,
+      with: { rawContent: true },
+    });
+
+    const recentPublications = await ctx.db.query.publications.findMany({
+      where: eq(publications.status, "published"),
+      orderBy: [desc(publications.publishedAt)],
+      limit: 5,
+      with: { processedContent: true },
+    });
+
+    return {
+      stats: {
+        collected: Number(rawCount?.count ?? 0),
+        processing: Number(processingCount?.count ?? 0),
+        pendingReview: Number(pendingReviewCount?.count ?? 0),
+        published: Number(publishedCount?.count ?? 0),
+      },
+      recentPipelines,
+      recentPublications,
     };
   }),
 

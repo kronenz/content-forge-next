@@ -15,17 +15,17 @@ export const sourceRouter = createTRPCRouter({
   list: publicProcedure
     .input(
       z.object({
-        type: sourceTypeEnum.optional(),
-        groupName: z.string().optional(),
-        isActive: z.number().min(0).max(1).optional(),
-        search: z.string().optional(),
+        type: sourceTypeEnum.nullish(),
+        groupName: z.string().nullish(),
+        isActive: z.number().min(0).max(1).nullish(),
+        search: z.string().nullish(),
       }).optional(),
     )
     .query(async ({ ctx, input }) => {
       const conditions: SQL[] = [];
       if (input?.type) conditions.push(eq(sources.type, input.type));
       if (input?.groupName) conditions.push(eq(sources.groupName, input.groupName));
-      if (input?.isActive !== undefined) conditions.push(eq(sources.isActive, input.isActive));
+      if (input?.isActive != null) conditions.push(eq(sources.isActive, input.isActive));
       if (input?.search) conditions.push(ilike(sources.name, `%${input.search}%`));
 
       return ctx.db.query.sources.findMany({

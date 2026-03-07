@@ -1,25 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 
 export default function SignupPage() {
-  const [isLoading, setIsLoading] = useState<string | null>(null);
-  const supabase = createClient();
-
-  const handleOAuthSignup = async (provider: "google" | "github") => {
-    setIsLoading(provider);
-    const { origin } = window.location;
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${origin}/auth/callback`,
-      },
-    });
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-6 px-4">
@@ -30,25 +12,7 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => handleOAuthSignup("google")}
-            disabled={isLoading !== null}
-          >
-            {isLoading === "google" ? "가입 중..." : "Google로 가입하기"}
-          </Button>
-
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => handleOAuthSignup("github")}
-            disabled={isLoading !== null}
-          >
-            {isLoading === "github" ? "가입 중..." : "GitHub로 가입하기"}
-          </Button>
-        </div>
+        <SocialLoginButtons mode="signup" />
 
         <p className="text-muted-foreground text-center text-sm">
           이미 계정이 있으신가요?{" "}
