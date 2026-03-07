@@ -1,7 +1,8 @@
 import { z } from "zod/v4";
-import { eq, ilike, isNotNull, SQL } from "drizzle-orm";
+import { eq, ilike, isNotNull, desc, SQL } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
-import { sources } from "@/server/db/schema";
+import { sources, rawContents } from "@/server/db/schema";
+import { addCollectJob, registerSchedule, removeSchedule } from "@/server/queue/collect-queue";
 
 const priorityEnum = z.enum(["low", "medium", "high", "critical"]);
 const sourceTypeEnum = z.enum(["rss", "api", "web", "research"]);
@@ -114,7 +115,44 @@ export const sourceRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.uuid() }))
     .mutation(async ({ ctx, input }) => {
+      await removeSchedule(input.id);
       await ctx.db.delete(sources).where(eq(sources.id, input.id));
       return { success: true };
+    }),
+
+  collect: protectedProcedure
+    .input(z.object({ id: z.uuid() }))
+    .mutation(async ({ input }) => {
+      const jobId = await addCollectJob(input.id, "manual");
+      return { jobId };
+    }),
+
+  syncSchedules: protectedProcedure.mutation(async ({ ctx }) => {
+    const activeSources = await ctx.db.query.sources.findMany({
+      where: eq(sources.isActive, 1),
+    });
+    let registered = 0;
+    for (const source of activeSources) {
+      if (source.schedule) {
+        await registerSchedule(source.id, source.schedule);
+        registered++;
+      }
+    }
+    return { registered };
+  }),
+
+  rawContents: publicProcedure
+    .input(
+      z.object({
+        sourceId: z.uuid(),
+        limit: z.number().min(1).max(100).default(20),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.query.rawContents.findMany({
+        where: eq(rawContents.sourceId, input.sourceId),
+        orderBy: [desc(rawContents.collectedAt)],
+        limit: input.limit,
+      });
     }),
 });
