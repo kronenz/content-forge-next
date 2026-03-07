@@ -3,6 +3,7 @@ import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -17,10 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={cn("font-sans", geist.variable)}>
+    <html lang="ko" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
       <body className="antialiased">
+        <ThemeProvider>
           <Providers>{children}</Providers>
-        </body>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
