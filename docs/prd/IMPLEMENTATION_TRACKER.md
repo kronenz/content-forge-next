@@ -63,29 +63,30 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 ### Agent 구현
 각 Agent의 입출력이 PRD 스펙과 일치하는지 반드시 검증할 것.
 
-- [ ] Analyst Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `analysis_report` YAML 구조와 일치하는가?
-- [ ] Writer Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `drafts` YAML 구조와 일치하는가? (blog, linkedin, twitter, instagram)
-- [ ] Editor Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `edit_report` YAML 구조와 일치하는가? (5대 품질 지표 포함)
-- [ ] Platform Formatter Agent
-  - 파일: -
+- [x] Analyst Agent
+  - 파일: `src/server/agents/analyst.ts`, `src/server/agents/types.ts`
+  - 체크: 출력이 PRD의 `analysis_report` YAML 구조와 일치하는가? ✅
+- [x] Writer Agent
+  - 파일: `src/server/agents/writer.ts`
+  - 체크: 출력이 PRD의 `drafts` YAML 구조와 일치하는가? (blog, linkedin, twitter, instagram) ✅
+- [x] Editor Agent
+  - 파일: `src/server/agents/editor.ts`
+  - 체크: 출력이 PRD의 `edit_report` YAML 구조와 일치하는가? (5대 품질 지표 포함) ✅
+- [x] Platform Formatter Agent
+  - 파일: `src/server/agents/formatter.ts`
 
 ### 파이프라인 엔진
-- [ ] 파이프라인 실행 엔진 (BullMQ Job Chain)
-  - 파일: -
+- [x] 파이프라인 실행 엔진 (Agent Chain)
+  - 파일: `src/server/pipeline/engine.ts`, `src/server/api/routers/pipeline.ts`
+  - 체크: Analyst → Writer → Editor → Formatter 순차 실행, 단계별 DB 기록 ✅
 - [ ] 이벤트 발행 (WebSocket)
   - 파일: -
   - 체크: 이벤트명이 `01-architecture.md`의 이벤트 목록과 일치하는가?
-- [ ] 파이프라인 모니터 UI
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 Pipeline Monitor 화면과 일치하는가?
-- [ ] 단계별 중간 데이터 열람 UI
-  - 파일: -
+- [x] 파이프라인 모니터 UI
+  - 파일: `src/app/(dashboard)/pipelines/page.tsx`, `src/components/pipeline/pipeline-run-card.tsx`, `src/components/pipeline/pipeline-step-detail.tsx`
+  - 체크: `07-ui-ux.md`의 Pipeline Monitor 화면과 일치하는가? ✅ (진행 바, 단계별 상세, 토큰/시간 통계)
+- [x] 단계별 중간 데이터 열람 UI
+  - 파일: `src/components/pipeline/pipeline-step-detail.tsx`
 - [ ] 커스텀 파이프라인 구성
   - 파일: -
   - 체크: PRD의 `custom_pipeline` YAML 구조 지원하는가?
