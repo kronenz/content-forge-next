@@ -38,14 +38,18 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 - [x] 소스 등록 UI
   - 파일: `src/app/(dashboard)/sources/page.tsx`, `src/components/sources/source-card.tsx`, `src/components/sources/source-dialog.tsx`, `src/components/sources/delete-source-dialog.tsx`
   - 체크: `07-ui-ux.md`의 Source Manager 화면과 일치하는가? ✅ (검색, 타입 필터, 그룹별 목록, 소스 카드, CRUD 다이얼로그)
-- [ ] RSS/Atom 수집기
-  - 파일: -
-- [ ] 웹 스크래핑 수집기
-  - 파일: -
-- [ ] 수집 스케줄러 (BullMQ)
-  - 파일: -
-- [ ] 중복 감지 (해시 기반)
-  - 파일: -
+- [x] RSS/Atom 수집기
+  - 파일: `src/server/collectors/rss-collector.ts`, `src/server/collectors/base-collector.ts`
+  - 체크: rss-parser, 키워드/제외 필터링, 이미지 추출, 메타데이터 수집 ✅
+- [x] 웹 스크래핑 수집기
+  - 파일: `src/server/collectors/web-collector.ts`
+  - 체크: cheerio CSS 셀렉터, 단일/목록 페이지 모드, 커스텀 셀렉터 ✅
+- [x] 수집 스케줄러 (BullMQ)
+  - 파일: `src/server/queue/connection.ts`, `src/server/queue/collect-queue.ts`, `src/server/queue/worker.ts`
+  - 체크: Redis 연결, Repeatable Job, concurrency 5, 재시도 3회 ✅
+- [x] 중복 감지 (해시 기반)
+  - 파일: `src/server/collectors/base-collector.ts`, `src/server/collectors/index.ts`
+  - 체크: SHA-256 해시, raw_contents_hash_idx unique index ✅
 - [ ] 소스 그룹 관리
   - 파일: -
 - [ ] processing_prompt 입력 UI
@@ -59,29 +63,30 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 ### Agent 구현
 각 Agent의 입출력이 PRD 스펙과 일치하는지 반드시 검증할 것.
 
-- [ ] Analyst Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `analysis_report` YAML 구조와 일치하는가?
-- [ ] Writer Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `drafts` YAML 구조와 일치하는가? (blog, linkedin, twitter, instagram)
-- [ ] Editor Agent
-  - 파일: -
-  - 체크: 출력이 PRD의 `edit_report` YAML 구조와 일치하는가? (5대 품질 지표 포함)
-- [ ] Platform Formatter Agent
-  - 파일: -
+- [x] Analyst Agent
+  - 파일: `src/server/agents/analyst.ts`, `src/server/agents/types.ts`
+  - 체크: 출력이 PRD의 `analysis_report` YAML 구조와 일치하는가? ✅
+- [x] Writer Agent
+  - 파일: `src/server/agents/writer.ts`
+  - 체크: 출력이 PRD의 `drafts` YAML 구조와 일치하는가? (blog, linkedin, twitter, instagram) ✅
+- [x] Editor Agent
+  - 파일: `src/server/agents/editor.ts`
+  - 체크: 출력이 PRD의 `edit_report` YAML 구조와 일치하는가? (5대 품질 지표 포함) ✅
+- [x] Platform Formatter Agent
+  - 파일: `src/server/agents/formatter.ts`
 
 ### 파이프라인 엔진
-- [ ] 파이프라인 실행 엔진 (BullMQ Job Chain)
-  - 파일: -
+- [x] 파이프라인 실행 엔진 (Agent Chain)
+  - 파일: `src/server/pipeline/engine.ts`, `src/server/api/routers/pipeline.ts`
+  - 체크: Analyst → Writer → Editor → Formatter 순차 실행, 단계별 DB 기록 ✅
 - [ ] 이벤트 발행 (WebSocket)
   - 파일: -
   - 체크: 이벤트명이 `01-architecture.md`의 이벤트 목록과 일치하는가?
-- [ ] 파이프라인 모니터 UI
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 Pipeline Monitor 화면과 일치하는가?
-- [ ] 단계별 중간 데이터 열람 UI
-  - 파일: -
+- [x] 파이프라인 모니터 UI
+  - 파일: `src/app/(dashboard)/pipelines/page.tsx`, `src/components/pipeline/pipeline-run-card.tsx`, `src/components/pipeline/pipeline-step-detail.tsx`
+  - 체크: `07-ui-ux.md`의 Pipeline Monitor 화면과 일치하는가? ✅ (진행 바, 단계별 상세, 토큰/시간 통계)
+- [x] 단계별 중간 데이터 열람 UI
+  - 파일: `src/components/pipeline/pipeline-step-detail.tsx`
 - [ ] 커스텀 파이프라인 구성
   - 파일: -
   - 체크: PRD의 `custom_pipeline` YAML 구조 지원하는가?

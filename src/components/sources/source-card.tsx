@@ -1,6 +1,6 @@
 "use client";
 
-import { Rss, Globe, Zap, Search, MoreHorizontal, Pencil, Pause, Play, Trash2 } from "lucide-react";
+import { Rss, Globe, Zap, Search, MoreHorizontal, Pencil, Pause, Play, Trash2, Download, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,9 +65,11 @@ interface SourceCardProps {
   onEdit: (source: Source) => void;
   onToggleActive: (source: Source) => void;
   onDelete: (source: Source) => void;
+  onCollect: (source: Source) => void;
+  isCollecting?: boolean;
 }
 
-export function SourceCard({ source, onEdit, onToggleActive, onDelete }: SourceCardProps) {
+export function SourceCard({ source, onEdit, onToggleActive, onDelete, onCollect, isCollecting }: SourceCardProps) {
   const typeConfig = TYPE_CONFIG[source.type];
   const TypeIcon = typeConfig.icon;
   const isActive = source.isActive === 1;
@@ -148,6 +150,18 @@ export function SourceCard({ source, onEdit, onToggleActive, onDelete }: SourceC
                 }
               />
               <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => onCollect(source)}
+                  disabled={isCollecting || !isActive}
+                >
+                  {isCollecting ? (
+                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Download className="mr-2 h-3.5 w-3.5" />
+                  )}
+                  {isCollecting ? "수집 중..." : "즉시 수집"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => onEdit(source)}>
                   <Pencil className="mr-2 h-3.5 w-3.5" />
                   편집

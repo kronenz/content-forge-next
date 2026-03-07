@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Search, Inbox } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -95,6 +96,26 @@ export default function SourcesPage() {
     onSuccess: () => utils.source.list.invalidate(),
   });
 
+  const [collectingIds, setCollectingIds] = useState<Set<string>>(new Set());
+  const collectMutation = trpc.source.collect.useMutation({
+    onSuccess: (_data, variables) => {
+      toast.success("수집 작업이 큐에 등록되었습니다.");
+      setCollectingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.id);
+        return next;
+      });
+    },
+    onError: (error, variables) => {
+      toast.error(`수집 실패: ${error.message}`);
+      setCollectingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(variables.id);
+        return next;
+      });
+    },
+  });
+
   function handleEdit(source: Source) {
     setEditSource(source);
     setEditOpen(true);
@@ -108,6 +129,11 @@ export default function SourcesPage() {
     setDeleteSource(source);
     setDeleteOpen(true);
   }
+
+  const handleCollect = useCallback((source: Source) => {
+    setCollectingIds((prev) => new Set(prev).add(source.id));
+    collectMutation.mutate({ id: source.id });
+  }, [collectMutation]);
 
   // Group sources by groupName
   const grouped = (() => {
@@ -186,6 +212,8 @@ export default function SourcesPage() {
                     onEdit={handleEdit}
                     onToggleActive={handleToggleActive}
                     onDelete={handleDelete}
+                    onCollect={handleCollect}
+                    isCollecting={collectingIds.has(source.id)}
                   />
                 ))}
               </div>
@@ -201,6 +229,8 @@ export default function SourcesPage() {
               onEdit={handleEdit}
               onToggleActive={handleToggleActive}
               onDelete={handleDelete}
+              onCollect={handleCollect}
+              isCollecting={collectingIds.has(source.id)}
             />
           ))}
         </div>
