@@ -1,0 +1,55 @@
+{
+  "$schema": "../schemas/pipeline.schema.json",
+  "pipeline_id": "db-migration",
+  "name": "DB 스키마 변경 파이프라인",
+  "description": "스키마 변경 시 안전한 마이그레이션 절차",
+  "trigger": "스키마 변경 필요 시",
+
+  "phases": [
+    {
+      "phase": "analyze",
+      "executor": "db",
+      "steps": [
+        "현재 schema.ts 확인",
+        "PRD 도메인 모델과 비교",
+        "변경 영향 범위 파악 (어떤 라우터/컴포넌트가 영향받는지)"
+      ]
+    },
+    {
+      "phase": "implement",
+      "executor": "db",
+      "steps": [
+        "schema.ts 수정 (엔티티, relations)",
+        "bun run db:generate (마이그레이션 SQL 생성)",
+        "생성된 SQL 검토 (파괴적 변경 여부 확인)"
+      ],
+      "caution": "DROP/ALTER 포함 시 orchestrator 승인 필요"
+    },
+    {
+      "phase": "cascade-update",
+      "description": "스키마 변경에 따른 연쇄 업데이트",
+      "parallel": true,
+      "tasks": [
+        {
+          "executor": "backend-api",
+          "task": "영향받는 tRPC 라우터 업데이트",
+          "trigger": "스키마 타입 변경"
+        },
+        {
+          "executor": "ai-pipeline",
+          "task": "영향받는 Agent 입출력 타입 확인",
+          "trigger": "pipelineSteps 등 파이프라인 관련 스키마 변경 시"
+        }
+      ]
+    },
+    {
+      "phase": "verify",
+      "executor": "orchestrator",
+      "steps": [
+        "bun run typecheck (타입 호환성 확인)",
+        "bun run test",
+        "bun run build"
+      ]
+    }
+  ]
+}

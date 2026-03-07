@@ -1,0 +1,141 @@
+{
+  "$schema": "./schemas/registry.schema.json",
+  "version": "1.0.0",
+  "project": "content-forge-next",
+  "description": "Claude Code 개발 에이전트 팀 레지스트리",
+
+  "agents": {
+    "frontend": {
+      "name": "Frontend Agent",
+      "role": "페이지, 라우트, 레이아웃 구현",
+      "scope": ["src/app/"],
+      "instructions": "src/app/AGENTS.md",
+      "prd_refs": ["07-ui-ux.md", "05-platform-preview.md"],
+      "capabilities": ["next-app-router", "server-components", "client-components", "routing"],
+      "reads": ["src/lib/", "src/types/", "src/components/"],
+      "writes": ["src/app/"],
+      "depends_on": ["ui", "backend-api"]
+    },
+
+    "ui": {
+      "name": "UI/UX Agent",
+      "role": "디자인 시스템, UI 컴포넌트, 프리뷰 렌더러",
+      "scope": ["src/components/"],
+      "instructions": "src/components/AGENTS.md",
+      "prd_refs": ["07-ui-ux.md", "05-platform-preview.md", "06-quality-review.md"],
+      "capabilities": ["shadcn-ui", "tailwind-css", "responsive-design", "dark-mode"],
+      "reads": ["src/lib/", "src/types/"],
+      "writes": ["src/components/"],
+      "depends_on": []
+    },
+
+    "backend-api": {
+      "name": "Backend API Agent",
+      "role": "tRPC 라우터, 비즈니스 로직, 미들웨어",
+      "scope": ["src/server/api/"],
+      "instructions": "src/server/api/AGENTS.md",
+      "prd_refs": ["01-architecture.md", "09-tech-stack.md"],
+      "capabilities": ["trpc", "zod-validation", "auth-middleware", "error-handling"],
+      "reads": ["src/server/db/", "src/lib/", "src/types/"],
+      "writes": ["src/server/api/"],
+      "depends_on": ["db"]
+    },
+
+    "db": {
+      "name": "Database Agent",
+      "role": "스키마 설계, 마이그레이션, 쿼리 최적화",
+      "scope": ["src/server/db/", "drizzle/"],
+      "instructions": "src/server/db/AGENTS.md",
+      "prd_refs": ["01-architecture.md"],
+      "capabilities": ["drizzle-orm", "postgresql", "migrations", "query-optimization"],
+      "reads": ["src/types/"],
+      "writes": ["src/server/db/", "drizzle/"],
+      "depends_on": []
+    },
+
+    "ai-pipeline": {
+      "name": "AI Pipeline Agent",
+      "role": "AI Agent 구현, 파이프라인 엔진, 프롬프트 엔지니어링",
+      "scope": ["src/server/agents/", "src/server/pipeline/"],
+      "instructions": "src/server/agents/AGENTS.md",
+      "prd_refs": ["03-ai-agent-pipeline.md"],
+      "capabilities": ["vercel-ai-sdk", "prompt-engineering", "streaming", "bullmq"],
+      "reads": ["src/server/db/", "src/lib/", "src/types/"],
+      "writes": ["src/server/agents/", "src/server/pipeline/"],
+      "depends_on": ["db"]
+    },
+
+    "collector": {
+      "name": "Collector Agent",
+      "role": "소스 수집기 (RSS, API, 웹 스크래핑, Research)",
+      "scope": ["src/server/collectors/"],
+      "instructions": "src/server/collectors/AGENTS.md",
+      "prd_refs": ["02-source-collection.md"],
+      "capabilities": ["rss-parsing", "web-scraping", "api-integration", "scheduling"],
+      "reads": ["src/server/db/", "src/lib/"],
+      "writes": ["src/server/collectors/"],
+      "depends_on": ["db"]
+    },
+
+    "publisher": {
+      "name": "Publisher Agent",
+      "role": "플랫폼 발행 연동 (Blog, LinkedIn, X, Instagram)",
+      "scope": ["src/server/publishers/"],
+      "instructions": "src/server/publishers/AGENTS.md",
+      "prd_refs": ["04-content-publishing.md"],
+      "capabilities": ["oauth2", "platform-apis", "scheduling", "rate-limiting"],
+      "reads": ["src/server/db/", "src/lib/"],
+      "writes": ["src/server/publishers/"],
+      "depends_on": ["db"]
+    },
+
+    "devops": {
+      "name": "DevOps Agent",
+      "role": "Docker, CI/CD, 인프라, 배포",
+      "scope": ["infra/", ".github/", "Dockerfile", "docker-compose*.yml", "Makefile"],
+      "instructions": "infra/AGENTS.md",
+      "prd_refs": ["09-tech-stack.md"],
+      "capabilities": ["docker", "github-actions", "vercel", "terraform"],
+      "reads": ["package.json", "bun.lock"],
+      "writes": ["infra/", ".github/", "Dockerfile", "docker-compose*.yml", "Makefile"],
+      "depends_on": []
+    },
+
+    "qa": {
+      "name": "QA Agent",
+      "role": "테스트 작성, E2E 테스트, 품질 검증",
+      "scope": ["tests/"],
+      "instructions": "tests/AGENTS.md",
+      "prd_refs": ["01-architecture.md"],
+      "capabilities": ["vitest", "playwright", "snapshot-testing", "integration-testing"],
+      "reads": ["src/"],
+      "writes": ["tests/"],
+      "depends_on": ["backend-api", "frontend"]
+    },
+
+    "research": {
+      "name": "Research Agent",
+      "role": "기술 조사, PRD 보강, 의사결정 근거 마련",
+      "scope": ["docs/"],
+      "instructions": "docs/research/AGENTS.md",
+      "prd_refs": [],
+      "capabilities": ["web-search", "documentation", "analysis", "comparison"],
+      "reads": ["docs/prd/", "package.json"],
+      "writes": ["docs/research/"],
+      "depends_on": []
+    }
+  },
+
+  "coordination": {
+    "orchestrator": "main-claude-session",
+    "communication": {
+      "method": "file-based",
+      "contracts_dir": ".agents/contracts/",
+      "description": "메인 세션이 subagent를 Agent tool로 호출, 결과를 파일로 수집"
+    },
+    "conflict_resolution": {
+      "shared_files": ["src/lib/", "src/types/"],
+      "rule": "공유 파일 수정 시 메인 세션이 직접 수행하거나 단일 에이전트에만 위임"
+    }
+  }
+}

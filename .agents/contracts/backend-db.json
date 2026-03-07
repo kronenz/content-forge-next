@@ -1,0 +1,54 @@
+{
+  "$schema": "../schemas/contract.schema.json",
+  "contract_id": "backend-db",
+  "version": "1.0.0",
+  "description": "Backend Agent들과 DB Agent 간의 인터페이스 계약",
+
+  "parties": {
+    "provider": "db",
+    "consumers": ["backend-api", "ai-pipeline", "collector", "publisher"]
+  },
+
+  "interfaces": {
+    "drizzle_orm": {
+      "description": "Drizzle ORM을 통한 DB 접근",
+      "location": "src/lib/db.ts",
+      "rules": [
+        "모든 DB 접근은 Drizzle ORM 경유 — raw SQL 절대 금지",
+        "db 인스턴스는 src/lib/db.ts에서 단일 export",
+        "스키마 변경 시 drizzle-kit으로 마이그레이션 생성 필수"
+      ]
+    },
+    "schema": {
+      "description": "DB 스키마 정의",
+      "location": "src/server/db/schema.ts",
+      "entities": [
+        "sources", "rawContents", "pipelineRuns", "pipelineSteps",
+        "processedContents", "reviews", "publications"
+      ],
+      "rules": [
+        "엔티티 이름은 docs/prd/01-architecture.md 도메인 모델과 일치",
+        "컬럼명은 snake_case, TypeScript 필드는 camelCase",
+        "relations은 schema.ts 하단에 별도 정의"
+      ]
+    }
+  },
+
+  "migration_protocol": {
+    "steps": [
+      "1. src/server/db/schema.ts 수정",
+      "2. bun run db:generate (마이그레이션 SQL 생성)",
+      "3. 생성된 SQL 검토",
+      "4. bun run db:migrate (적용)",
+      "5. 관련 tRPC 라우터 타입 확인"
+    ],
+    "caution": "스키마 변경은 DB Agent만 수행. 다른 에이전트는 스키마 수정 금지"
+  },
+
+  "constraints": [
+    "스키마 변경 권한은 DB Agent에만 있음",
+    "다른 에이전트는 schema.ts를 read-only로 참조",
+    "새 엔티티 추가 시 반드시 relations도 함께 정의",
+    "jsonb 타입 사용 시 $type<T>()로 TypeScript 타입 명시"
+  ]
+}

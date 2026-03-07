@@ -1,0 +1,81 @@
+{
+  "$schema": "../schemas/pipeline.schema.json",
+  "pipeline_id": "full-stack-feature",
+  "name": "풀스택 기능 개발 파이프라인 (병렬)",
+  "description": "DB + API + UI를 모두 포함하는 기능. 병렬 실행 가능한 단계를 최대화",
+  "trigger": "GitHub Issue (풀스택 기능)",
+
+  "phases": [
+    {
+      "phase": "plan",
+      "description": "기획 확인, 인터페이스 계약 수립",
+      "executor": "orchestrator",
+      "parallel": false,
+      "steps": [
+        "이슈 및 PRD 확인",
+        "필요한 DB 스키마 변경 사항 파악",
+        "API 엔드포인트 목록 정리",
+        "UI 컴포넌트 목록 정리",
+        "에이전트 간 인터페이스 (타입) 사전 합의"
+      ]
+    },
+    {
+      "phase": "schema",
+      "description": "DB 스키마 변경 (선행 필수)",
+      "executor": "db",
+      "parallel": false,
+      "steps": [
+        "schema.ts 수정",
+        "마이그레이션 생성 및 검토"
+      ],
+      "output": "updated schema types"
+    },
+    {
+      "phase": "parallel-impl",
+      "description": "API와 UI 병렬 구현",
+      "parallel": true,
+      "tasks": [
+        {
+          "executor": "backend-api",
+          "task": "tRPC 라우터 구현",
+          "depends_on": ["schema"],
+          "input": "스키마 타입, API 스펙",
+          "output": "동작하는 tRPC 엔드포인트"
+        },
+        {
+          "executor": "ui",
+          "task": "UI 컴포넌트 구현 (목 데이터)",
+          "depends_on": [],
+          "input": "PRD 와이어프레임, 디자인 스펙",
+          "output": "컴포넌트 (데이터 바인딩 전)"
+        }
+      ]
+    },
+    {
+      "phase": "integrate",
+      "description": "프론트엔드-백엔드 통합",
+      "executor": "frontend",
+      "parallel": false,
+      "steps": [
+        "UI 컴포넌트에 tRPC hooks 연결",
+        "페이지 라우트 구성",
+        "Server Component / Client Component 경계 설정"
+      ]
+    },
+    {
+      "phase": "verify",
+      "description": "통합 검증",
+      "executor": "orchestrator",
+      "parallel": true,
+      "tasks": [
+        { "executor": "orchestrator", "task": "lint + typecheck + build" },
+        { "executor": "qa", "task": "통합 테스트 작성 및 실행" }
+      ]
+    },
+    {
+      "phase": "commit",
+      "description": "커밋 및 PR",
+      "executor": "orchestrator"
+    }
+  ]
+}
