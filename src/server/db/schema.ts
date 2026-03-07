@@ -48,6 +48,7 @@ export const agentRoleEnum = pgEnum("agent_role", [
   "compliance",
   "localizer",
   "platform_formatter",
+  "researcher",
 ]);
 
 export const platformEnum = pgEnum("platform", [

@@ -7,6 +7,7 @@ import {
   processedContents,
   publications,
 } from "@/server/db/schema";
+import { computeTrustLevel } from "@/server/services/auto-approval";
 
 export const analyticsRouter = createTRPCRouter({
   overview: publicProcedure.query(async ({ ctx }) => {
@@ -33,5 +34,78 @@ export const analyticsRouter = createTRPCRouter({
       processedContents: Number(contentCount?.count ?? 0),
       publications: Number(pubCount?.count ?? 0),
     };
+  }),
+
+  reviewStats: publicProcedure.query(async ({ ctx }) => {
+    const allReviews = await ctx.db.query.reviews.findMany();
+
+    const total = allReviews.length;
+    const approved = allReviews.filter((r) => r.status === "approved").length;
+    const rejected = allReviews.filter((r) => r.status === "rejected").length;
+    const revision = allReviews.filter((r) => r.status === "revision").length;
+    const pending = allReviews.filter((r) => r.status === "pending").length;
+    const autoApproved = allReviews.filter(
+      (r) => r.status === "approved" && r.reviewer === "auto",
+    ).length;
+    const humanApproved = approved - autoApproved;
+
+    const withScores = allReviews.filter((r) => r.qualityScore != null);
+    const avgQuality =
+      withScores.length > 0
+        ? withScores.reduce((s, r) => s + (r.qualityScore ?? 0), 0) /
+          withScores.length
+        : 0;
+
+    const avgScores =
+      withScores.length > 0
+        ? {
+            quality: avgQuality,
+            accuracy:
+              withScores.reduce((s, r) => s + (r.accuracyScore ?? 0), 0) /
+              withScores.length,
+            humanLike:
+              withScores.reduce((s, r) => s + (r.humanLikeScore ?? 0), 0) /
+              withScores.length,
+            platformFit:
+              withScores.reduce((s, r) => s + (r.platformFitScore ?? 0), 0) /
+              withScores.length,
+            cultureFit:
+              withScores.reduce((s, r) => s + (r.cultureFitScore ?? 0), 0) /
+              withScores.length,
+          }
+        : null;
+
+    const trustLevel = computeTrustLevel(total, avgQuality);
+
+    return {
+      total,
+      approved,
+      rejected,
+      revision,
+      pending,
+      autoApproved,
+      humanApproved,
+      approvalRate: total > 0 ? Math.round((approved / total) * 100) : 0,
+      avgScores,
+      trustLevel,
+    };
+  }),
+
+  publishingStats: publicProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        platform: publications.platform,
+        total: sql<number>`count(*)::int`,
+        published: sql<number>`count(*) filter (where ${publications.status} = 'published')::int`,
+        failed: sql<number>`count(*) filter (where ${publications.status} = 'failed')::int`,
+        scheduled: sql<number>`count(*) filter (where ${publications.status} = 'scheduled')::int`,
+      })
+      .from(publications)
+      .groupBy(publications.platform);
+
+    return result.map((r) => ({
+      ...r,
+      successRate: r.total > 0 ? Math.round((r.published / r.total) * 100) : 0,
+    }));
   }),
 });

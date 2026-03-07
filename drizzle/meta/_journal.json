@@ -15,6 +15,13 @@
       "when": 1772861023391,
       "tag": "0001_woozy_toad_men",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772865078381,
+      "tag": "0002_ambiguous_scorpion",
+      "breakpoints": true
     }
   ]
 }
