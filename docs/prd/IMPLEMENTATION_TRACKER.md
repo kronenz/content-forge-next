@@ -8,8 +8,12 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 ## Phase 1: Foundation (Week 1-3)
 > PRD 참조: `01-architecture.md`, `09-tech-stack.md`
 
-- [ ] Next.js 15 프로젝트 초기화
-  - 파일: -
+- [x] Next.js 15 프로젝트 초기화
+  - 파일: `package.json`, `tsconfig.json`, `next.config.ts`, `eslint.config.mjs`, `postcss.config.mjs`, `.prettierrc`, `components.json`
+  - 앱: `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`
+  - 유틸: `src/lib/env.ts` (Zod v4), `src/lib/utils.ts`
+  - UI: `src/components/ui/button.tsx` (shadcn)
+  - 참고: Next.js 16 (latest), Tailwind CSS 4, shadcn/ui, ESLint 9
 - [ ] Drizzle ORM 스키마 설계
   - 파일: -
   - 체크: Source, RawContent, PipelineRun, PipelineStep, ProcessedContent, Review, Publication 엔티티가 `01-architecture.md` 도메인 모델과 일치하는가?
