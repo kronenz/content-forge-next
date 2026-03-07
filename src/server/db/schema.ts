@@ -86,6 +86,40 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
 // Tables
 // ============================================================
 
+export const pipelineTemplates = pgTable("pipeline_templates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  description: text("description"),
+  agentSteps: jsonb("agent_steps").$type<string[]>(),
+  isActive: integer("is_active").notNull().default(1),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const pipelineTemplateSources = pgTable(
+  "pipeline_template_sources",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    pipelineTemplateId: uuid("pipeline_template_id")
+      .notNull()
+      .references(() => pipelineTemplates.id, { onDelete: "cascade" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => sources.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    uniqueIndex("pipeline_template_sources_unique_idx").on(
+      table.pipelineTemplateId,
+      table.sourceId,
+    ),
+  ],
+);
+
 export const sources = pgTable("sources", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -131,6 +165,10 @@ export const pipelineRuns = pgTable("pipeline_runs", {
   rawContentId: uuid("raw_content_id")
     .notNull()
     .references(() => rawContents.id, { onDelete: "cascade" }),
+  pipelineTemplateId: uuid("pipeline_template_id").references(
+    () => pipelineTemplates.id,
+    { onDelete: "set null" },
+  ),
   status: pipelineStatusEnum("status").notNull().default("pending"),
   config: jsonb("config").$type<Record<string, unknown>>(),
   startedAt: timestamp("started_at", { withTimezone: true }),
@@ -246,8 +284,31 @@ export const subscriptions = pgTable("subscriptions", {
 // Relations
 // ============================================================
 
+export const pipelineTemplatesRelations = relations(
+  pipelineTemplates,
+  ({ many }) => ({
+    templateSources: many(pipelineTemplateSources),
+    pipelineRuns: many(pipelineRuns),
+  }),
+);
+
+export const pipelineTemplateSourcesRelations = relations(
+  pipelineTemplateSources,
+  ({ one }) => ({
+    pipelineTemplate: one(pipelineTemplates, {
+      fields: [pipelineTemplateSources.pipelineTemplateId],
+      references: [pipelineTemplates.id],
+    }),
+    source: one(sources, {
+      fields: [pipelineTemplateSources.sourceId],
+      references: [sources.id],
+    }),
+  }),
+);
+
 export const sourcesRelations = relations(sources, ({ many }) => ({
   rawContents: many(rawContents),
+  templateSources: many(pipelineTemplateSources),
 }));
 
 export const rawContentsRelations = relations(rawContents, ({ one, many }) => ({
@@ -264,6 +325,10 @@ export const pipelineRunsRelations = relations(
     rawContent: one(rawContents, {
       fields: [pipelineRuns.rawContentId],
       references: [rawContents.id],
+    }),
+    pipelineTemplate: one(pipelineTemplates, {
+      fields: [pipelineRuns.pipelineTemplateId],
+      references: [pipelineTemplates.id],
     }),
     steps: many(pipelineSteps),
     processedContents: many(processedContents),

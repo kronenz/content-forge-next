@@ -1,14 +1,14 @@
 import { z } from "zod/v4";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
-import { pipelineRuns, pipelineSteps } from "@/server/db/schema";
+import { pipelineRuns, pipelineSteps, rawContents } from "@/server/db/schema";
 import { executePipeline } from "@/server/pipeline/engine";
 
 export const pipelineRouter = createTRPCRouter({
   list: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.query.pipelineRuns.findMany({
       orderBy: (pipelineRuns, { desc }) => [desc(pipelineRuns.createdAt)],
-      with: { rawContent: true },
+      with: { rawContent: true, pipelineTemplate: true },
     });
   }),
 
@@ -31,6 +31,7 @@ export const pipelineRouter = createTRPCRouter({
     .input(
       z.object({
         rawContentId: z.uuid(),
+        pipelineTemplateId: z.uuid().optional(),
         config: z.record(z.string(), z.unknown()).optional(),
       }),
     )
@@ -39,6 +40,7 @@ export const pipelineRouter = createTRPCRouter({
         .insert(pipelineRuns)
         .values({
           rawContentId: input.rawContentId,
+          pipelineTemplateId: input.pipelineTemplateId,
           config: input.config,
           status: "pending",
         })
@@ -67,10 +69,15 @@ export const pipelineRouter = createTRPCRouter({
     .input(
       z.object({
         limit: z.number().min(1).max(100).default(50),
+        sourceIds: z.array(z.uuid()).optional(),
       }).optional(),
     )
     .query(async ({ ctx, input }) => {
+      const sourceIds = input?.sourceIds;
       return ctx.db.query.rawContents.findMany({
+        where: sourceIds && sourceIds.length > 0
+          ? inArray(rawContents.sourceId, sourceIds)
+          : undefined,
         orderBy: (rawContents, { desc }) => [desc(rawContents.collectedAt)],
         limit: input?.limit ?? 50,
         with: { source: true },

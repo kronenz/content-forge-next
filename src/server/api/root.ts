@@ -6,10 +6,12 @@ import { reviewRouter } from "./routers/review";
 import { publishRouter } from "./routers/publish";
 import { analyticsRouter } from "./routers/analytics";
 import { billingRouter } from "./routers/billing";
+import { pipelineTemplateRouter } from "./routers/pipeline-template";
 
 export const appRouter = createTRPCRouter({
   source: sourceRouter,
   pipeline: pipelineRouter,
+  pipelineTemplate: pipelineTemplateRouter,
   content: contentRouter,
   review: reviewRouter,
   publish: publishRouter,

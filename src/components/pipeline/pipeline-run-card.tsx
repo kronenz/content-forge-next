@@ -44,6 +44,7 @@ interface PipelineRunCardProps {
     completedAt: Date | null;
     createdAt: Date;
     rawContent: { title: string | null; body: string } | null;
+    pipelineTemplate: { id: string; name: string } | null;
   };
   onRefetch: () => void;
 }
@@ -114,6 +115,9 @@ export function PipelineRunCard({ run, onRefetch }: PipelineRunCardProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {run.pipelineTemplate && (
+              <Badge variant="outline">{run.pipelineTemplate.name}</Badge>
+            )}
             <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
             {run.status === "running" && (
               <Button
