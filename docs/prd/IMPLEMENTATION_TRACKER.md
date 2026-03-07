@@ -38,14 +38,18 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 - [x] 소스 등록 UI
   - 파일: `src/app/(dashboard)/sources/page.tsx`, `src/components/sources/source-card.tsx`, `src/components/sources/source-dialog.tsx`, `src/components/sources/delete-source-dialog.tsx`
   - 체크: `07-ui-ux.md`의 Source Manager 화면과 일치하는가? ✅ (검색, 타입 필터, 그룹별 목록, 소스 카드, CRUD 다이얼로그)
-- [ ] RSS/Atom 수집기
-  - 파일: -
-- [ ] 웹 스크래핑 수집기
-  - 파일: -
-- [ ] 수집 스케줄러 (BullMQ)
-  - 파일: -
-- [ ] 중복 감지 (해시 기반)
-  - 파일: -
+- [x] RSS/Atom 수집기
+  - 파일: `src/server/collectors/rss-collector.ts`, `src/server/collectors/base-collector.ts`
+  - 체크: rss-parser, 키워드/제외 필터링, 이미지 추출, 메타데이터 수집 ✅
+- [x] 웹 스크래핑 수집기
+  - 파일: `src/server/collectors/web-collector.ts`
+  - 체크: cheerio CSS 셀렉터, 단일/목록 페이지 모드, 커스텀 셀렉터 ✅
+- [x] 수집 스케줄러 (BullMQ)
+  - 파일: `src/server/queue/connection.ts`, `src/server/queue/collect-queue.ts`, `src/server/queue/worker.ts`
+  - 체크: Redis 연결, Repeatable Job, concurrency 5, 재시도 3회 ✅
+- [x] 중복 감지 (해시 기반)
+  - 파일: `src/server/collectors/base-collector.ts`, `src/server/collectors/index.ts`
+  - 체크: SHA-256 해시, raw_contents_hash_idx unique index ✅
 - [ ] 소스 그룹 관리
   - 파일: -
 - [ ] processing_prompt 입력 UI
