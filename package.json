@@ -15,7 +15,9 @@
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "bun run scripts/seed.ts"
+    "db:seed": "bun run scripts/seed.ts",
+    "cli": "bun run cli/index.ts",
+    "cli:dev": "bun run cli/index.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",
