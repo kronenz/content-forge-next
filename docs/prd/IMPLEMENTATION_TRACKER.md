@@ -20,23 +20,24 @@ PRD 문서의 각 요구사항이 구현되었는지 추적합니다.
 - [x] tRPC 라우터 기본 구조
   - 파일: `src/server/api/trpc.ts` (context, procedures), `src/server/api/root.ts` (root router), `src/server/api/routers/{source,pipeline,content,review,publish,analytics}.ts`, `src/app/api/trpc/[trpc]/route.ts` (API handler), `src/lib/trpc.ts` (React client), `src/components/providers.tsx` (TanStack Query + tRPC provider)
   - tRPC v11, @tanstack/react-query, superjson, publicProcedure + protectedProcedure
-- [ ] Supabase Auth 연동
-  - 파일: -
-- [ ] 대시보드 기본 레이아웃
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 전체 레이아웃 (사이드바 구조)과 일치하는가?
+- [x] Supabase Auth 연동
+  - 파일: `src/lib/supabase/client.ts`, `src/lib/supabase/server.ts`, `src/lib/supabase/middleware.ts`, `src/middleware.ts`, `src/app/(auth)/login/page.tsx`, `src/app/(auth)/signup/page.tsx`, `src/app/auth/callback/route.ts`
+  - 체크: Google/GitHub OAuth, tRPC protectedProcedure 세션 연동, 보호 라우트 미들웨어 ✅
+- [x] 대시보드 기본 레이아웃
+  - 파일: `src/components/layout/sidebar.tsx`, `src/components/layout/header.tsx`, `src/components/theme-provider.tsx`, `src/app/(dashboard)/layout.tsx`, `src/app/(dashboard)/page.tsx`, `src/hooks/use-mobile.ts`
+  - 체크: `07-ui-ux.md`의 전체 레이아웃 (사이드바 구조)과 일치하는가? ✅
 
 ---
 
 ## Phase 2: Source Collection (Week 3-5)
 > PRD 참조: `02-source-collection.md`
 
-- [ ] Source CRUD API
-  - 파일: -
-  - 체크: Source 엔티티 필드가 PRD의 소스 등록 YAML 스펙과 일치하는가?
-- [ ] 소스 등록 UI
-  - 파일: -
-  - 체크: `07-ui-ux.md`의 Source Manager 화면과 일치하는가?
+- [x] Source CRUD API
+  - 파일: `src/server/api/routers/source.ts`, `src/server/db/schema.ts`, `drizzle/0001_woozy_toad_men.sql`
+  - 체크: Source 엔티티 필드가 PRD의 소스 등록 YAML 스펙과 일치하는가? ✅ (name, type, url, schedule, filters, tags, priority, processingPrompt, groupName)
+- [x] 소스 등록 UI
+  - 파일: `src/app/(dashboard)/sources/page.tsx`, `src/components/sources/source-card.tsx`, `src/components/sources/source-dialog.tsx`, `src/components/sources/delete-source-dialog.tsx`
+  - 체크: `07-ui-ux.md`의 Source Manager 화면과 일치하는가? ✅ (검색, 타입 필터, 그룹별 목록, 소스 카드, CRUD 다이얼로그)
 - [ ] RSS/Atom 수집기
   - 파일: -
 - [ ] 웹 스크래핑 수집기
