@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { pipelineRuns, sources } from "@/server/db/schema";
 import { sql, count } from "drizzle-orm";
-import { getPlan, type PlanId, type PlanLimits } from "./plans";
+import { getPlan, type PlanId, type PlanLimit } from "./plans";
 
 export interface UsageStats {
   sources: { used: number; limit: number };
@@ -37,14 +37,14 @@ export async function getUsageStats(planId: PlanId): Promise<UsageStats> {
     pipelineRuns: { used: pipelineRunCount, limit: limits.pipelineRunsPerMonth },
     researchAgent: {
       used: researchCount,
-      limit: limits.researchAgentPerMonth,
+      limit: limits.researchPerMonth,
     },
   };
 }
 
 export function checkLimit(
   planId: PlanId,
-  resource: keyof PlanLimits,
+  resource: keyof PlanLimit,
   currentUsage: number,
 ): { allowed: boolean; limit: number; remaining: number } {
   const plan = getPlan(planId);

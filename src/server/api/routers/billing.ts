@@ -3,25 +3,26 @@ import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { subscriptions } from "@/server/db/schema";
+import { PLANS } from "@/server/services/subscription";
+import type { PlanId } from "@/server/services/subscription";
 import {
-  PLANS,
-  getPlan,
+  getStripePriceId,
   createCheckoutSession,
   createCustomerPortalSession,
   getUsageStats,
 } from "@/server/billing";
-import type { PlanId } from "@/server/billing";
 
 export const billingRouter = createTRPCRouter({
   // Get all plans
   plans: publicProcedure.query(() => {
-    return Object.values(PLANS).map((plan) => ({
+    return PLANS.map((plan) => ({
       id: plan.id,
       name: plan.name,
       description: plan.description,
-      priceMonthly: plan.priceMonthly,
-      priceYearly: plan.priceYearly,
+      price: plan.price,
+      yearlyPrice: plan.yearlyPrice,
       limits: plan.limits,
+      features: plan.features,
       popular: plan.popular ?? false,
     }));
   }),
@@ -35,7 +36,6 @@ export const billingRouter = createTRPCRouter({
       .limit(1);
 
     if (!sub) {
-      // Return free plan defaults
       return {
         planId: "free" as PlanId,
         status: "active" as const,
@@ -75,11 +75,7 @@ export const billingRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const plan = getPlan(input.planId);
-      const priceId =
-        input.interval === "monthly"
-          ? plan.stripePriceIdMonthly
-          : plan.stripePriceIdYearly;
+      const priceId = getStripePriceId(input.planId, input.interval);
 
       if (!priceId) {
         throw new TRPCError({

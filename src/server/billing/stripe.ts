@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { env } from "@/lib/env";
-import { getPlanByStripePriceId, type PlanId } from "./plans";
+import { getPlanByStripePriceId } from "./plans";
 
 let stripeInstance: Stripe | null = null;
 
@@ -92,10 +92,9 @@ export function constructWebhookEvent(
 
 export function extractPlanFromSubscription(
   subscription: Stripe.Subscription,
-): PlanId | null {
+): string | null {
   const item = subscription.items.data[0];
   if (!item) return null;
   const priceId = item.price.id;
-  const plan = getPlanByStripePriceId(priceId);
-  return plan?.id ?? null;
+  return getPlanByStripePriceId(priceId);
 }
