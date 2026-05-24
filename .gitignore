@@ -33,3 +33,17 @@ next-env.d.ts
 # docker
 postgres_data/
 redis_data/
+
+# quality screenshots (ephemeral evidence only)
+04-quality/screenshots/*
+!04-quality/screenshots/.gitkeep
+
+# helper script logs
+helper-scripts/logs/*
+!helper-scripts/logs/.gitkeep
+
+# tooling state
+.omc/
+.omx/
+.claude/
+.agents/

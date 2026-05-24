@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Inbox, Play, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,15 +11,7 @@ import { trpc } from "@/lib/trpc";
 import { PipelineRunCard } from "@/components/pipeline/pipeline-run-card";
 import { RunPipelineDialog } from "@/components/pipeline/run-pipeline-dialog";
 import { PipelineTemplateCard } from "@/components/pipeline/pipeline-template-card";
-import { PipelineTemplateDialog } from "@/components/pipeline/pipeline-template-dialog";
 import { ManageSourcesDialog } from "@/components/pipeline/manage-sources-dialog";
-
-interface TemplateForEdit {
-  id: string;
-  name: string;
-  description: string | null;
-  agentSteps: string[] | null;
-}
 
 interface TemplateForSources {
   id: string;
@@ -27,10 +20,8 @@ interface TemplateForSources {
 }
 
 export default function PipelinesPage() {
+  const router = useRouter();
   const [runDialogOpen, setRunDialogOpen] = useState(false);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editTemplate, setEditTemplate] = useState<TemplateForEdit | null>(null);
   const [manageSourcesOpen, setManageSourcesOpen] = useState(false);
   const [manageSourcesTemplate, setManageSourcesTemplate] =
     useState<TemplateForSources | null>(null);
@@ -67,7 +58,7 @@ export default function PipelinesPage() {
           <div className="flex justify-end">
             <Button
               variant="outline"
-              onClick={() => setCreateDialogOpen(true)}
+              onClick={() => router.push("/pipelines/builder")}
             >
               <Plus className="mr-2 h-4 w-4" />
               템플릿 생성
@@ -92,7 +83,7 @@ export default function PipelinesPage() {
               <Button
                 variant="outline"
                 className="mt-4"
-                onClick={() => setCreateDialogOpen(true)}
+                onClick={() => router.push("/pipelines/builder")}
               >
                 첫 템플릿 만들기
               </Button>
@@ -104,8 +95,7 @@ export default function PipelinesPage() {
                   key={template.id}
                   template={template}
                   onEdit={(t) => {
-                    setEditTemplate(t);
-                    setEditDialogOpen(true);
+                    router.push(`/pipelines/builder?id=${t.id}`);
                   }}
                   onManageSources={(t) => {
                     setManageSourcesTemplate({
@@ -162,24 +152,6 @@ export default function PipelinesPage() {
           toast.success("파이프라인 실행이 시작되었습니다");
         }}
       />
-
-      <PipelineTemplateDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-        mode="create"
-      />
-
-      {editTemplate && (
-        <PipelineTemplateDialog
-          open={editDialogOpen}
-          onOpenChange={(open) => {
-            setEditDialogOpen(open);
-            if (!open) setEditTemplate(null);
-          }}
-          mode="edit"
-          defaultValues={editTemplate}
-        />
-      )}
 
       {manageSourcesTemplate && (
         <ManageSourcesDialog

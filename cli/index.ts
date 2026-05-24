@@ -51,7 +51,7 @@ async function main() {
       }
       case "sources": {
         const { sourcesCommand } = await import("./commands/sources");
-        await sourcesCommand();
+        await sourcesCommand(subArgs);
         break;
       }
       case "contents": {

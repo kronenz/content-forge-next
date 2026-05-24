@@ -71,6 +71,19 @@ function ManageSourcesForm({
     });
   }
 
+  function toggleGroup(sources: { id: string }[]) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      const allSelected = sources.every((s) => next.has(s.id));
+      if (allSelected) {
+        sources.forEach((s) => next.delete(s.id));
+      } else {
+        sources.forEach((s) => next.add(s.id));
+      }
+      return next;
+    });
+  }
+
   function handleSave() {
     updateMutation.mutate({
       id: templateId,
@@ -129,11 +142,42 @@ function ManageSourcesForm({
             등록된 소스가 없습니다
           </p>
         ) : (
-          Object.entries(grouped).map(([groupName, sources]) => (
+          Object.entries(grouped).map(([groupName, sources]) => {
+            const allSelected = sources.every((s) => selectedIds.has(s.id));
+            const someSelected = sources.some((s) => selectedIds.has(s.id));
+            return (
             <div key={groupName}>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                {groupName}
-              </p>
+              <button
+                type="button"
+                onClick={() => toggleGroup(sources)}
+                className="flex items-center gap-2 mb-2 w-full text-left"
+              >
+                <div
+                  className={`h-3.5 w-3.5 rounded border flex items-center justify-center shrink-0 transition ${
+                    allSelected
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : someSelected
+                        ? "bg-primary/50 border-primary text-primary-foreground"
+                        : "border-muted-foreground/40"
+                  }`}
+                >
+                  {allSelected ? (
+                    <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : someSelected ? (
+                    <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
+                      <path d="M3 6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  ) : null}
+                </div>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {groupName}
+                </span>
+                <span className="text-[10px] text-muted-foreground/60">
+                  ({sources.filter((s) => selectedIds.has(s.id)).length}/{sources.length})
+                </span>
+              </button>
               <div className="space-y-1">
                 {sources.map((source) => {
                   const checked = selectedIds.has(source.id);
@@ -187,7 +231,8 @@ function ManageSourcesForm({
                 })}
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 

@@ -1,17 +1,27 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { PipelineBuilder } from "@/components/pipeline-builder/pipeline-builder";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function BuilderContent() {
+  const searchParams = useSearchParams();
+  const templateId = searchParams.get("id") ?? undefined;
+  return <PipelineBuilder templateId={templateId} />;
+}
 
 export default function PipelineBuilderPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">파이프라인 빌더</h1>
-        <p className="text-sm text-muted-foreground">
-          AI Agent를 드래그앤드롭으로 배치하고 파이프라인을 구성합니다.
-        </p>
-      </div>
-      <PipelineBuilder />
-    </div>
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-[400px] w-full rounded-xl" />
+        </div>
+      }
+    >
+      <BuilderContent />
+    </Suspense>
   );
 }

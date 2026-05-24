@@ -1,228 +1,363 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1772852596220,
+  "lastScanned": 1773916925605,
   "projectRoot": "/home/bsh/develop/content-forge-next",
   "techStack": {
-    "languages": [],
-    "frameworks": [],
-    "packageManager": null,
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      },
+      {
+        "name": "C/C++",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "Makefile"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.1.6",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.4",
+        "category": "frontend"
+      },
+      {
+        "name": "vitest",
+        "version": "4.0.18",
+        "category": "testing"
+      }
+    ],
+    "packageManager": "npm",
     "runtime": null
   },
   "build": {
-    "buildCommand": null,
-    "testCommand": null,
-    "lintCommand": null,
-    "devCommand": null,
-    "scripts": {}
+    "buildCommand": "npm run build",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "next dev --turbopack",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint src/",
+      "typecheck": "tsc --noEmit",
+      "test": "vitest run",
+      "worker": "bun run src/server/queue/worker.ts",
+      "db:push": "drizzle-kit push",
+      "db:studio": "drizzle-kit studio",
+      "db:generate": "drizzle-kit generate",
+      "db:migrate": "drizzle-kit migrate",
+      "db:seed": "bun run scripts/seed.ts",
+      "cli": "bun run cli/index.ts",
+      "cli:dev": "bun run cli/index.ts"
+    }
   },
   "conventions": {
     "namingStyle": null,
     "importStyle": null,
     "testPattern": null,
-    "fileOrganization": null
+    "fileOrganization": "type-based"
   },
   "structure": {
     "isMonorepo": false,
     "workspaces": [],
-    "mainDirectories": [],
+    "mainDirectories": [
+      "docs",
+      "public",
+      "scripts",
+      "src",
+      "tests"
+    ],
     "gitBranches": {
       "defaultBranch": "main",
       "branchingStrategy": null
     }
   },
   "customNotes": [],
-  "directoryMap": {},
+  "directoryMap": {
+    "cli": {
+      "path": "cli",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1773916925589,
+      "keyFiles": [
+        "index.ts"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 1,
+      "lastAccessed": 1773916925590,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
+    },
+    "drizzle": {
+      "path": "drizzle",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1773916925600,
+      "keyFiles": [
+        "0000_curved_gravity.sql",
+        "0001_woozy_toad_men.sql",
+        "0002_ambiguous_scorpion.sql",
+        "0003_magenta_talisman.sql"
+      ]
+    },
+    "infra": {
+      "path": "infra",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1773916925601,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 1,
+      "lastAccessed": 1773916925601,
+      "keyFiles": []
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 4,
+      "lastAccessed": 1773916925601,
+      "keyFiles": [
+        "ci-local.sh",
+        "seed.ts",
+        "setup-runner.sh",
+        "test-suggest.ts"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1773916925602,
+      "keyFiles": [
+        "middleware.ts"
+      ]
+    },
+    "supabase": {
+      "path": "supabase",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1773916925602,
+      "keyFiles": [
+        "config.toml"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 1,
+      "lastAccessed": 1773916925602,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
+    },
+    "worker": {
+      "path": "worker",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773916925602,
+      "keyFiles": []
+    },
+    "cli/lib": {
+      "path": "cli/lib",
+      "purpose": "Library code",
+      "fileCount": 1,
+      "lastAccessed": 1773916925603,
+      "keyFiles": [
+        "output.ts"
+      ]
+    },
+    "infra/scripts": {
+      "path": "infra/scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 0,
+      "lastAccessed": 1773916925604,
+      "keyFiles": []
+    },
+    "src/__tests__": {
+      "path": "src/__tests__",
+      "purpose": "Test files",
+      "fileCount": 0,
+      "lastAccessed": 1773916925604,
+      "keyFiles": []
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 5,
+      "lastAccessed": 1773916925604,
+      "keyFiles": [
+        "AGENTS.md",
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 3,
+      "lastAccessed": 1773916925605,
+      "keyFiles": [
+        "AGENTS.md",
+        "providers.tsx",
+        "theme-provider.tsx"
+      ]
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 4,
+      "lastAccessed": 1773916925605,
+      "keyFiles": [
+        "db.ts",
+        "env.ts",
+        "trpc.ts"
+      ]
+    },
+    "src/types": {
+      "path": "src/types",
+      "purpose": "Type definitions",
+      "fileCount": 1,
+      "lastAccessed": 1773916925605,
+      "keyFiles": [
+        "preview.ts"
+      ]
+    }
+  },
   "hotPaths": [
     {
-      "path": "package.json",
-      "accessCount": 4,
-      "lastAccessed": 1772855359245,
+      "path": "01-management/vision/VISION.md",
+      "accessCount": 3,
+      "lastAccessed": 1773918288509,
+      "type": "file"
+    },
+    {
+      "path": "01-management/strategy/ROADMAP.md",
+      "accessCount": 3,
+      "lastAccessed": 1773918288906,
+      "type": "file"
+    },
+    {
+      "path": "02-research/requirements/PRD.md",
+      "accessCount": 3,
+      "lastAccessed": 1773918289367,
+      "type": "file"
+    },
+    {
+      "path": "02-research/architecture/ARCHITECTURE.md",
+      "accessCount": 3,
+      "lastAccessed": 1773918289950,
       "type": "file"
     },
     {
       "path": "CLAUDE.md",
-      "accessCount": 3,
-      "lastAccessed": 1772855084394,
-      "type": "file"
-    },
-    {
-      "path": "docs/AGENTS.md",
-      "accessCount": 3,
-      "lastAccessed": 1772855097096,
-      "type": "file"
-    },
-    {
-      "path": "eslint.config.mjs",
-      "accessCount": 3,
-      "lastAccessed": 1772855400007,
-      "type": "file"
-    },
-    {
-      "path": "docs/prd/00-overview.md",
       "accessCount": 2,
-      "lastAccessed": 1772854332526,
+      "lastAccessed": 1773917207781,
       "type": "file"
     },
     {
-      "path": "tsconfig.json",
+      "path": "02-research/spikes/SPIKE-001-code-review.md",
       "accessCount": 2,
-      "lastAccessed": 1772855316856,
+      "lastAccessed": 1773918290152,
       "type": "file"
     },
     {
-      "path": "src/lib/env.ts",
-      "accessCount": 2,
-      "lastAccessed": 1772855330901,
-      "type": "file"
-    },
-    {
-      "path": "README.md",
+      "path": "02-research/requirements/prd-original/00-overview.md",
       "accessCount": 1,
-      "lastAccessed": 1772853635138,
+      "lastAccessed": 1773917704289,
       "type": "file"
     },
     {
-      "path": "docs/prd/01-architecture.md",
+      "path": "02-research/requirements/prd-original/01-architecture.md",
       "accessCount": 1,
-      "lastAccessed": 1772853695018,
+      "lastAccessed": 1773917704656,
       "type": "file"
     },
     {
-      "path": "docs/prd/02-source-collection.md",
+      "path": "01-management/strategy/ROADMAP-original.md",
       "accessCount": 1,
-      "lastAccessed": 1772853723209,
+      "lastAccessed": 1773917705225,
       "type": "file"
     },
     {
-      "path": "docs/prd/03-ai-agent-pipeline.md",
+      "path": "02-research/requirements/prd-original/09-tech-stack.md",
       "accessCount": 1,
-      "lastAccessed": 1772853775872,
+      "lastAccessed": 1773917706044,
       "type": "file"
     },
     {
-      "path": "docs/prd/04-content-publishing.md",
+      "path": "02-research/requirements/prd-original/08-business-model.md",
       "accessCount": 1,
-      "lastAccessed": 1772853813831,
+      "lastAccessed": 1773917706356,
       "type": "file"
     },
     {
-      "path": "docs/prd/05-platform-preview.md",
+      "path": "02-research/requirements/prd-original/02-source-collection.md",
       "accessCount": 1,
-      "lastAccessed": 1772853862157,
+      "lastAccessed": 1773917714939,
       "type": "file"
     },
     {
-      "path": "docs/prd/06-quality-review.md",
+      "path": "02-research/requirements/prd-original/03-ai-agent-pipeline.md",
       "accessCount": 1,
-      "lastAccessed": 1772853911929,
+      "lastAccessed": 1773917715372,
       "type": "file"
     },
     {
-      "path": "docs/prd/07-ui-ux.md",
+      "path": "02-research/requirements/prd-original/07-ui-ux.md",
       "accessCount": 1,
-      "lastAccessed": 1772853998280,
+      "lastAccessed": 1773917715908,
       "type": "file"
     },
     {
-      "path": "docs/prd/08-business-model.md",
+      "path": "02-research/requirements/prd-original/11-seo-strategy.md",
       "accessCount": 1,
-      "lastAccessed": 1772854032385,
+      "lastAccessed": 1773917716289,
       "type": "file"
     },
     {
-      "path": "docs/prd/09-tech-stack.md",
+      "path": "03-implementation/IMPLEMENTATION_TRACKER.md",
       "accessCount": 1,
-      "lastAccessed": 1772854074122,
+      "lastAccessed": 1773917717154,
       "type": "file"
     },
     {
-      "path": "docs/prd/10-roadmap.md",
+      "path": "02-research/spikes/SPIKE-000-example.md",
       "accessCount": 1,
-      "lastAccessed": 1772854112161,
-      "type": "file"
-    },
-    {
-      "path": "docs/prd/11-seo-strategy.md",
-      "accessCount": 1,
-      "lastAccessed": 1772854323310,
-      "type": "file"
-    },
-    {
-      "path": "docs/prd/IMPLEMENTATION_TRACKER.md",
-      "accessCount": 1,
-      "lastAccessed": 1772854510813,
-      "type": "file"
-    },
-    {
-      "path": "Dockerfile",
-      "accessCount": 1,
-      "lastAccessed": 1772854902024,
-      "type": "file"
-    },
-    {
-      "path": "docker-compose.yml",
-      "accessCount": 1,
-      "lastAccessed": 1772854905594,
-      "type": "file"
-    },
-    {
-      "path": "docker-compose.test.yml",
-      "accessCount": 1,
-      "lastAccessed": 1772854908294,
-      "type": "file"
-    },
-    {
-      "path": "Makefile",
-      "accessCount": 1,
-      "lastAccessed": 1772854911817,
-      "type": "file"
-    },
-    {
-      "path": ".env.example",
-      "accessCount": 1,
-      "lastAccessed": 1772854915498,
-      "type": "file"
-    },
-    {
-      "path": "lighthouserc.json",
-      "accessCount": 1,
-      "lastAccessed": 1772854918375,
-      "type": "file"
-    },
-    {
-      "path": "next.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1772855292622,
-      "type": "file"
-    },
-    {
-      "path": "postcss.config.mjs",
-      "accessCount": 1,
-      "lastAccessed": 1772855293893,
-      "type": "file"
-    },
-    {
-      "path": "src/app/globals.css",
-      "accessCount": 1,
-      "lastAccessed": 1772855294435,
-      "type": "file"
-    },
-    {
-      "path": ".prettierrc",
-      "accessCount": 1,
-      "lastAccessed": 1772855297123,
-      "type": "file"
-    },
-    {
-      "path": "src/app/layout.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772855333173,
-      "type": "file"
-    },
-    {
-      "path": "src/app/page.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1772855334304,
+      "lastAccessed": 1773918157361,
       "type": "file"
     }
   ],

@@ -1,33 +1,81 @@
-# Content Forge - Claude Code 프로젝트 가이드
+# Content Forge - Project Instructions
 
-## 프로젝트 개요
+## Project Overview
 
 AI Agent 기반 콘텐츠 수집-가공-발행 자동화 플랫폼.
 수집된 정보를 편집국 구조의 AI Agent 파이프라인이 가공하여 멀티 플랫폼에 발행한다.
 
-## 필수 참조 문서
+---
 
-구현 전 반드시 관련 PRD를 읽어야 한다. 추측으로 구현하지 말 것.
+## Project Structure
 
-| 문서 | 언제 참조 |
-|------|----------|
-| `docs/prd/00-overview.md` | 프로젝트 전체 맥락 파악 시 |
-| `docs/prd/01-architecture.md` | 시스템 구조, 도메인 모델, 이벤트 설계 |
-| `docs/prd/02-source-collection.md` | 소스 수집 기능 구현 시 |
-| `docs/prd/03-ai-agent-pipeline.md` | AI Agent 구현 시 (역할, 입출력 스펙) |
-| `docs/prd/04-content-publishing.md` | 발행 기능 구현 시 |
-| `docs/prd/05-platform-preview.md` | 프리뷰 컴포넌트 구현 시 |
-| `docs/prd/06-quality-review.md` | 검토/승인 시스템 구현 시 |
-| `docs/prd/07-ui-ux.md` | UI 레이아웃, 화면 설계 시 |
-| `docs/prd/08-business-model.md` | 과금, 플랜 제한 구현 시 |
-| `docs/prd/09-tech-stack.md` | 기술 선택, 프로젝트 구조 |
-| `docs/prd/10-roadmap.md` | 구현 순서, 우선순위 판단 시 |
-| `docs/prd/11-seo-strategy.md` | SEO 관련 구현 시 |
+This project follows a **company-style organizational structure**. Always respect the layer separation.
 
-## 기술 스택 (확정)
+```
+01-management/        → Strategy (WHY/WHEN)        + versions/
+02-research/          → R&D (WHAT)                 + versions/
+03-implementation/    → Task Plans (HOW)           + tasks/ & bugfix/ & patch/
+04-quality/           → QA (IS IT RIGHT?)          + test-plans/ & screenshots/
+05-design-team/       → Design (LOOK & FEEL)       + guidelines/ & reviews/
+06-security-team/     → Security (IS IT SECURE?)   + guidelines/ & audits/
+07-deployment-team/   → Deployment (HOW TO SHIP)   + guidelines/ & releases/
+08-db-migration-team/ → DB Migration (SCHEMA SYNC) + migrations/ & audits/
+src/                  → Actual Code
+cli/                  → CLI Agent Module
+```
+
+**Versioning:** Each layer maintains history via `versions/` subfolders and `CHANGELOG.md`.
+
+See [PROJECT-STRUCTURE-TEMPLATE.md](PROJECT-STRUCTURE-TEMPLATE.md) for full documentation.
+
+---
+
+## Language Policy
+
+**Documentation and planning documents MUST be written in English.** The application serves a Korean-language market, so the actual app UI uses Korean.
+
+| Context | Language | Examples |
+|---------|----------|---------|
+| Code & comments | English | Variable names, code comments, commit messages |
+| Planning docs | English | PRD, ARCHITECTURE, PLAN.md, SPEC.md, requirements docs |
+| Task documents | English | CHECKLIST.md, NOTES.md, REFERENCES.md |
+| Design guidelines | English | DESIGN-SYSTEM.md, UI-PATTERNS.md |
+| App UI labels | Korean | Button text, form labels, error messages, tooltips |
+| App UI content | Korean | User-facing strings in templates |
+
+**When referencing Korean UI terms in docs**, use the format: `English term (Korean: native text)`.
+
+---
+
+## Key Reference Documents
+
+구현 전 반드시 관련 문서를 읽어야 한다. 추측으로 구현하지 말 것.
+
+| Document | Purpose | Location |
+|----------|---------|----------|
+| Overview | 프로젝트 전체 맥락 | `02-research/requirements/prd-original/00-overview.md` |
+| Architecture | 시스템 구조, 도메인 모델 | `02-research/requirements/prd-original/01-architecture.md` |
+| Source Collection | 소스 수집 기능 | `02-research/requirements/prd-original/02-source-collection.md` |
+| AI Agent Pipeline | Agent 역할, 입출력 스펙 | `02-research/requirements/prd-original/03-ai-agent-pipeline.md` |
+| Content Publishing | 발행 기능 | `02-research/requirements/prd-original/04-content-publishing.md` |
+| Platform Preview | 프리뷰 컴포넌트 | `02-research/requirements/prd-original/05-platform-preview.md` |
+| Quality Review | 검토/승인 시스템 | `02-research/requirements/prd-original/06-quality-review.md` |
+| UI/UX | UI 레이아웃, 화면 설계 | `02-research/requirements/prd-original/07-ui-ux.md` |
+| Business Model | 과금, 플랜 제한 | `02-research/requirements/prd-original/08-business-model.md` |
+| Tech Stack | 기술 선택, 구조 | `02-research/requirements/prd-original/09-tech-stack.md` |
+| Roadmap | 구현 순서, 우선순위 | `01-management/strategy/ROADMAP-original.md` |
+| SEO Strategy | SEO 관련 | `02-research/requirements/prd-original/11-seo-strategy.md` |
+| VISION | 프로젝트 비전 | `01-management/vision/VISION.md` |
+| PRD (consolidated) | 통합 요구사항 | `02-research/requirements/PRD.md` |
+| ARCHITECTURE | 시스템 아키텍처 | `02-research/architecture/ARCHITECTURE.md` |
+| ROADMAP | 로드맵 & 마일스톤 | `01-management/strategy/ROADMAP.md` |
+
+---
+
+## Tech Stack
 
 - **Runtime**: Bun
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript (strict mode)
 - **UI**: shadcn/ui + Tailwind CSS 4
 - **State**: Zustand + TanStack Query
@@ -37,10 +85,15 @@ AI Agent 기반 콘텐츠 수집-가공-발행 자동화 플랫폼.
 - **AI**: Vercel AI SDK + Claude API (primary) + OpenAI (secondary)
 - **Auth**: Supabase Auth
 - **Payments**: Stripe
+- **Testing**: Vitest (unit) + Playwright (E2E)
+- **CI/CD**: GitHub Actions (self-hosted runner)
+- **Deployment**: Vercel (production) + Docker (local/on-prem)
 
-## 도메인 모델 (핵심 엔티티)
+---
 
-구현 시 이 이름과 관계를 일관되게 사용할 것. `docs/prd/01-architecture.md`의 도메인 모델 섹션 참조.
+## Domain Model
+
+구현 시 이 이름과 관계를 일관되게 사용할 것.
 
 ```
 Source → RawContent → PipelineRun → PipelineStep
@@ -55,12 +108,12 @@ Source → RawContent → PipelineRun → PipelineStep
 - **Review**: 품질 평가 + 승인/반려
 - **Publication**: 발행 기록 + 성과 메트릭
 
-## AI Agent 역할 (편집국 구조)
+---
 
-Agent 구현 시 `docs/prd/03-ai-agent-pipeline.md`의 입출력 스펙을 정확히 따를 것.
+## AI Agent Roles (Editorial Room Structure)
 
-| Agent | 역할 | 핵심 출력 |
-|-------|------|----------|
+| Agent | Role | Key Output |
+|-------|------|------------|
 | Analyst | 원본 분석, 인사이트 추출 | AnalysisReport |
 | Writer | 플랫폼별 초안 작성 | DraftContents |
 | Editor | 품질 교정, 점수 산출 | EditedContents + EditReport |
@@ -71,236 +124,365 @@ Agent 구현 시 `docs/prd/03-ai-agent-pipeline.md`의 입출력 스펙을 정�
 | Localizer | 문화적/언어적 현지화 | LocalizedContents |
 | Platform Formatter | 플랫폼 포맷 변환 | FormattedContents |
 
-## 코딩 컨벤션
+---
 
-### 파일 구조
-- `src/app/` - Next.js App Router 페이지
-- `src/components/` - UI 컴포넌트
-- `src/server/` - 서버 로직 (API, DB, Agents, Pipeline)
-- `src/lib/` - 유틸리티, 설정
-- `src/types/` - 공유 타입 정의
-- `worker/` - 별도 워커 프로세스
+## Coding Conventions
 
-### 네이밍
-- 파일: kebab-case (`pipeline-monitor.tsx`)
-- 컴포넌트: PascalCase (`PipelineMonitor`)
-- 함수/변수: camelCase (`getPipelineRun`)
-- DB 테이블/컬럼: snake_case (`pipeline_runs.started_at`)
-- 타입: PascalCase (`PipelineRun`)
-- 상수: UPPER_SNAKE_CASE (`MAX_RETRY_COUNT`)
+### File Structure
+- `src/app/` - Next.js App Router pages
+- `src/components/` - UI components
+- `src/server/` - Server logic (API, DB, Agents, Pipeline)
+- `src/lib/` - Utilities, config
+- `src/types/` - Shared type definitions
+- `cli/` - CLI Agent Module
+- `worker/` - Background worker processes
 
-### 패턴
-- Server Components를 기본으로 사용. Client Component는 `"use client"` 명시
-- DB 쿼리는 Drizzle ORM으로만. raw SQL 금지
-- AI 호출은 Vercel AI SDK의 `generateText`/`streamText` 사용
-- 에러 핸들링은 tRPC의 TRPCError 사용
-- 환경 변수는 `src/lib/env.ts`에서 zod로 검증 후 export
+### Naming
+- Files: kebab-case (`pipeline-monitor.tsx`)
+- Components: PascalCase (`PipelineMonitor`)
+- Functions/Variables: camelCase (`getPipelineRun`)
+- DB Tables/Columns: snake_case (`pipeline_runs.started_at`)
+- Types: PascalCase (`PipelineRun`)
+- Constants: UPPER_SNAKE_CASE (`MAX_RETRY_COUNT`)
 
-### 품질 기준
-- 5대 품질 지표를 UI에 표시할 때 반드시 통일: Quality, Accuracy, Human-like, Platform-fit, Culture-fit
-- 점수는 0-10 (소수점 1자리)
-- 파이프라인 이벤트명은 `docs/prd/01-architecture.md`의 이벤트 목록과 일치시킬 것
+### Patterns
+- Server Components by default. Client Components require `"use client"`
+- DB queries via Drizzle ORM only. No raw SQL
+- AI calls via Vercel AI SDK `generateText`/`streamText`
+- Error handling via tRPC's `TRPCError`
+- Environment variables validated with zod in `src/lib/env.ts`
 
-## 구현 체크리스트 참조
+### Quality Standards
+- 5 quality metrics (UI display): Quality, Accuracy, Human-like, Platform-fit, Culture-fit
+- Scores: 0-10 (1 decimal place)
+- Pipeline event names must match the event catalog in ARCHITECTURE
 
-각 Phase 구현 시 `docs/prd/10-roadmap.md`의 작업 목록을 체크리스트로 사용할 것.
-Phase 순서를 건너뛰지 말 것.
+---
 
-## GitHub 프로젝트 관리
+## Design Team Policy (CRITICAL)
 
-### 리포지토리
+**All frontend-related work MUST comply with design team guidelines.**
+
+### Before Any Frontend Work
+
+1. **Review Design System** — Check `05-design-team/guidelines/DESIGN-SYSTEM.md`
+2. **Follow UI Patterns** — Use patterns from `05-design-team/guidelines/UI-PATTERNS.md`
+3. **Ensure Accessibility** — Meet requirements in `05-design-team/guidelines/ACCESSIBILITY.md`
+
+### Frontend Implementation Checklist
+
+- [ ] Colors match design system palette
+- [ ] Typography follows the defined scale
+- [ ] Spacing uses design tokens (4px base grid)
+- [ ] Components follow design specifications
+- [ ] Accessible (WCAG 2.1 AA)
+- [ ] Mobile-responsive
+- [ ] Uses Lucide icons (no emojis in UI)
+
+### Design Review Required
+
+Frontend tasks require a design review document before completion:
+1. Create review document: `05-design-team/reviews/TASK-NNN-review.md`
+2. Use the template from: `05-design-team/reviews/REVIEW-TEMPLATE.md`
+
+### App-Specific Guidelines
+
+| App | UI Library | Key Guidelines |
+|-----|------------|----------------|
+| content-forge | shadcn/ui | Tailwind CSS 4, Server Components default, Korean UI labels |
+
+---
+
+## Security Team Policy (CRITICAL)
+
+**All security-sensitive work MUST comply with security team guidelines.**
+
+### Before Any Security-Related Work
+
+1. **Review Security Policy** — Check `06-security-team/guidelines/SECURITY-POLICY.md`
+2. **Follow API Security** — Use patterns from `06-security-team/guidelines/API-SECURITY.md`
+3. **Ensure Data Protection** — Meet requirements in `06-security-team/guidelines/DATA-SECURITY.md`
+4. **Check Deployment Security** — Follow `06-security-team/guidelines/DEPLOYMENT-SECURITY.md`
+
+### Security Implementation Checklist
+
+- [ ] Input validation on all user inputs
+- [ ] Parameterized queries (Drizzle ORM — no SQL injection)
+- [ ] Proper authentication checks (Supabase Auth)
+- [ ] Role-based authorization
+- [ ] Sensitive data encrypted at rest and in transit
+- [ ] Rate limiting configured
+- [ ] Security headers set
+- [ ] No secrets committed to source control
+
+---
+
+## Deployment Team Policy (CRITICAL)
+
+**All deployment-related work MUST comply with deployment team guidelines.**
+
+### Before Any Deployment Work
+
+1. **Review Deployment Strategy** — Check `07-deployment-team/guidelines/DEPLOYMENT-STRATEGY.md`
+2. **Follow Infrastructure Guidelines** — Use patterns from `07-deployment-team/guidelines/INFRASTRUCTURE.md`
+3. **Set Up Monitoring** — Meet requirements in `07-deployment-team/guidelines/MONITORING.md`
+
+### Deployment Checklist
+
+- [ ] All tests passing
+- [ ] Security review completed
+- [ ] Performance benchmarks met
+- [ ] Database migrations tested on staging
+- [ ] Rollback plan documented
+- [ ] Monitoring and alerting configured
+
+---
+
+## DB Migration Team Policy (CRITICAL)
+
+**All database schema changes MUST be tracked by the DB Migration Team.**
+
+### Before Any Schema Change
+
+1. **Review Migration Policy** — Check `08-db-migration-team/guidelines/MIGRATION-POLICY.md`
+2. **Check Migration Tracking** — Review `08-db-migration-team/guidelines/MIGRATION-TRACKING.md`
+3. **Verify Dependencies** — Ensure prerequisite migrations are documented
+
+### Migration Checklist
+
+- [ ] Migration script created with proper header
+- [ ] Script is idempotent (`IF NOT EXISTS` / `IF EXISTS` guards)
+- [ ] `MIGRATION-TRACKING.md` updated
+- [ ] Tested on local database
+- [ ] Cloud migration script prepared (if deploying to Vercel)
+- [ ] Rollback SQL included
+
+---
+
+## Working with Tasks
+
+### When Given a New Feature/Task
+
+1. **Create a task folder** in `03-implementation/tasks/active/`:
+   ```
+   TASK-NNN-feature-name/
+   ├── REFERENCES.md   # Links to PRD/ARCH versions (REQUIRED)
+   ├── PLAN.md         # Implementation approach
+   ├── SPEC.md         # Technical details
+   ├── CHECKLIST.md    # Subtasks to track
+   └── NOTES.md        # Observations and decisions
+   ```
+2. Write REFERENCES.md first — link to specific PRD and ARCHITECTURE versions
+3. Write the PLAN.md before coding
+4. Update CHECKLIST.md as you progress
+5. Move to `tasks/completed/` when done
+
+### When Given a Bug-Fix
+
+1. Create in `03-implementation/bugfix/active/`:
+   ```
+   BUGFIX-NNN-description/
+   ├── PLAN.md         # Root cause analysis and fix approach
+   ├── CHECKLIST.md    # Fix steps and verification
+   └── NOTES.md        # Investigation notes
+   ```
+
+### When Given a Patch (UI polish, cosmetic tweaks)
+
+1. Create in `03-implementation/patch/active/`:
+   ```
+   PATCH-NNN-description/
+   ├── PLAN.md         # What to change and why
+   └── CHECKLIST.md    # Change items and verification
+   ```
+
+### Task Categories
+
+| Scenario | Category | Folder |
+|----------|----------|--------|
+| New feature or enhancement | TASK | `tasks/active/` |
+| Planned refactoring | TASK | `tasks/active/` |
+| Production bug fix | BUGFIX | `bugfix/active/` |
+| UI spacing / cosmetic | PATCH | `patch/active/` |
+| Minor UX improvement | PATCH | `patch/active/` |
+
+---
+
+## GitHub Project Management
+
+### Repository
 - **Repo**: `kronenz/content-forge-next`
 - **Project Board**: [Content Forge Roadmap](https://github.com/users/kronenz/projects/7) (Project #7)
 
-### gh CLI 사용법
-gh CLI가 인증되어 있다. 이슈, PR, 프로젝트 관리에 적극 활용할 것.
+### gh CLI
+gh CLI is authenticated. Use it for issues, PRs, and project management.
 
 ```bash
-# 이슈 조회
-gh issue list                              # 전체 이슈 목록
-gh issue list --label "phase:1-foundation" # Phase별 필터
-gh issue list --milestone "M1: MVP (소스수집→가공→프리뷰)" # Milestone별
-gh issue view 1                            # 이슈 상세
-
-# 이슈 상태 관리
-gh issue close 1 --reason completed        # 구현 완료 시 닫기
-gh issue reopen 1                          # 재오픈
-gh issue edit 1 --add-label "priority:critical"  # 라벨 추가
-
-# PR 생성 (기능 구현 후)
-gh pr create --title "feat: ..." --body "Closes #1"  # 이슈 자동 닫기 연결
-
-# 프로젝트 보드
-gh project item-list 7 --owner kronenz     # 프로젝트 아이템 목록
+gh issue list                              # All issues
+gh issue view 1                            # Issue detail
+gh pr create --title "feat: ..." --body "Closes #1"
+gh project item-list 7 --owner kronenz     # Project board items
 ```
 
-### 라벨 체계
-- **Phase**: `phase:1-foundation` ~ `phase:8-saas` (구현 단계)
+### Labels
+- **Phase**: `phase:1-foundation` ~ `phase:8-saas`
 - **Type**: `type:feature`, `type:infra`, `type:bug`, `type:docs`, `type:agent`, `type:ui`
 - **Priority**: `priority:critical`, `priority:high`, `priority:medium`, `priority:low`
-- **PRD 참조**: `prd:architecture`, `prd:source`, `prd:pipeline`, `prd:publishing`, `prd:preview`, `prd:review`, `prd:ui-ux`, `prd:business`, `prd:seo`
 
 ### Milestones
-| Milestone | 이슈 범위 | 기한 |
-|-----------|----------|------|
+| Milestone | Scope | Deadline |
+|-----------|-------|----------|
 | M1: MVP | Phase 1-4 (#1~#12, #19~#20) | 2026-05-14 |
 | M2: Publishing + Auto-Approval | Phase 5-6 (#13~#14) | 2026-06-14 |
 | M3: Advanced + Polish | Phase 7 (#15~#16) | 2026-07-14 |
 | M4: SaaS Launch | Phase 8 (#17~#18) | 2026-08-14 |
 
-### 이슈-구현 연동 규칙
-- 기능 구현 시작 전: 해당 이슈 번호 확인
-- 브랜치명: `feat/#이슈번호-간단설명` (예: `feat/#1-project-init`)
-- 커밋 메시지에 `#이슈번호` 포함
-- PR 생성 시 `Closes #이슈번호`로 자동 닫기 연결
-- 구현 완료 후: `docs/prd/IMPLEMENTATION_TRACKER.md` 해당 항목 체크
+### Issue-Implementation Rules
+- Check issue number before starting
+- Branch: `feat/#issue-number-description`
+- Commit message includes `#issue-number`
+- PR: `Closes #issue-number` for auto-close
+- After completion: update `03-implementation/IMPLEMENTATION_TRACKER.md`
+
+---
 
 ## CI/CD
 
-### GitHub Actions 워크플로우
-| 워크플로우 | 트리거 | 동작 |
-|-----------|--------|------|
-| `.github/workflows/ci.yml` | PR, push to main | lint → typecheck → test(Postgres+Redis) → build → docker build → lighthouse(PR only) |
-| `.github/workflows/deploy.yml` | push to main | Vercel 프로덕션 배포 |
+### GitHub Actions
+| Workflow | Trigger | Actions |
+|----------|---------|---------|
+| `ci.yml` | PR, push to main | lint → typecheck → test → build → docker → lighthouse(PR) |
+| `deploy.yml` | push to main | Vercel production deploy |
 
-### Self-Hosted Runner (온프렘)
-- **서버**: `minikube-01` (192.168.101.193)
-- **Runner 이름**: `content-forge-local` (라벨: `self-hosted,linux,x64,on-prem`)
-- **서비스**: `systemctl --user {status|stop|restart} actions-runner`
-- **로그**: `journalctl --user -u actions-runner -f`
-- CI workflow는 기본으로 self-hosted runner 사용. GitHub repo variable `CI_RUNNER=ubuntu-latest` 설정하면 클라우드 runner로 전환 가능
-- Runner 재설치: `make setup-runner`
+### Self-Hosted Runner
+- **Server**: `minikube-01` (192.168.101.193)
+- **Runner**: `content-forge-local` (labels: `self-hosted,linux,x64,on-prem`)
+- **Service**: `systemctl --user {status|stop|restart} actions-runner`
+- Switch to cloud: set repo variable `CI_RUNNER=ubuntu-latest`
 
-### 로컬 CI 파이프라인
-GitHub Actions CI를 로컬에서 미러링하는 스크립트 (`scripts/ci-local.sh`).
-Claude 대화에서 `make ci` 결과만 확인하면 lint/typecheck/test 개별 실행 불필요.
-
+### Local CI
 ```bash
-make ci            # 전체 CI (lint → typecheck → test → build → docker)
-make ci-quick      # 빠른 검증 (lint + typecheck, ~10초)
-make ci-test       # 테스트만 (Docker PG+Redis 자동 실행/종료)
-make ci-build      # Next.js 빌드만
-make ci-docker     # Docker 이미지 빌드만
+make ci            # Full CI (lint → typecheck → test → build → docker)
+make ci-quick      # Quick check (lint + typecheck, ~10s)
+make ci-test       # Tests only (Docker PG+Redis)
+make ci-build      # Next.js build only
+make ci-docker     # Docker image build only
 ```
 
-### Git Hooks (`.githooks/`)
-- **pre-push**: push 전 자동으로 lint + typecheck 실행 (실패 시 push 차단)
-- 스킵: `git push --no-verify`
-- 설정: `make setup-hooks` (또는 `git config core.hooksPath .githooks`)
+### CI Pass Criteria
+- `bun run lint` passes
+- `bun run typecheck` passes
+- `bun run test` passes (Postgres + Redis)
+- `bun run build` succeeds
+- Docker image build succeeds
+- Lighthouse: SEO > 95, Performance > 90 (PR only)
 
-### CI 통과 조건
-- `bun run lint` 통과
-- `bun run typecheck` 통과
-- `bun run test` 통과 (Postgres + Redis 서비스 컨테이너)
-- `bun run build` 성공
-- Docker 이미지 빌드 성공
-- Lighthouse: SEO > 95, Performance > 90 (PR 시)
+---
 
-### 필요한 GitHub Secrets
-```
-VERCEL_TOKEN
-VERCEL_ORG_ID
-VERCEL_PROJECT_ID
-```
+## Docker & Local Development
 
-## Docker 로컬 환경
+### Docker Files
+- `Dockerfile` - Multi-stage build
+- `docker-compose.yml` - Local dev (app + Postgres + Redis)
+- `docker-compose.test.yml` - Test-only (ephemeral)
+- `docker-compose.prod.yml` - Production
 
-### 구성 파일
-- `Dockerfile` - 멀티스테이지 빌드 (deps → builder → runner)
-- `docker-compose.yml` - 로컬 개발 (app + Postgres + Redis)
-- `docker-compose.test.yml` - 테스트 전용 (일회성 실행)
-- `docker-compose.prod.yml` - 프로덕션 배포 (restart policy, healthcheck, 리소스 제한)
-- `.env.production.example` - 프로덕션 환경 변수 템플릿
-
-### Makefile 명령어
+### Makefile Commands
 ```bash
-# 로컬 개발
-make dev           # 로컬 개발 서버 (bun dev)
-make build         # 프로덕션 빌드
-make lint          # ESLint 실행
-make typecheck     # TypeScript 타입 체크
-make test          # 로컬 테스트 실행
-
-# CI 파이프라인 (로컬)
-make ci            # 전체 CI (lint → typecheck → test → build → docker)
-make ci-quick      # 빠른 검증 (lint + typecheck)
-make ci-test       # 테스트만 (Docker PG+Redis 포함)
-make ci-build      # Next.js 빌드만
-make ci-docker     # Docker 이미지 빌드만
-
-# Docker
-make up            # Docker 전체 스택 실행 (app + postgres + redis)
-make up-build      # Docker 빌드 후 실행
-make down          # Docker 중지
-make test-docker   # Docker로 테스트 실행 (DB+Redis 포함, 일회성)
-make clean         # Docker 중지 + 볼륨 삭제
-
-# 데이터베이스
-make db-push       # Drizzle 스키마를 DB에 반영
-make db-studio     # Drizzle Studio 실행 (DB GUI)
-make db-generate   # Drizzle 마이그레이션 생성
-make db-migrate    # Drizzle 마이그레이션 실행
-
-# 프로덕션
-make prod-up       # 프로덕션 Docker 스택 빌드+실행
-make prod-down     # 프로덕션 Docker 중지
-make prod-build    # 프로덕션 Docker 이미지 빌드
-make prod-logs     # 프로덕션 로그 확인
-
-# 기타
-make logs          # Docker 로그 확인
-make setup-runner  # Self-hosted runner 설치/재설치
-make setup-hooks   # Git hooks 설정
+make dev           # Local dev server (bun dev)
+make build         # Production build
+make up            # Docker full stack
+make down          # Docker stop
+make db-push       # Drizzle schema push
+make db-studio     # Drizzle Studio (DB GUI)
+make db-generate   # Drizzle migration generate
+make db-migrate    # Drizzle migration run
+make prod-up       # Production Docker stack
 ```
 
-### Docker 서비스 포트
-| 서비스 | 포트 | 접속 정보 |
-|--------|------|----------|
+### Service Ports
+| Service | Port | Connection |
+|---------|------|------------|
 | app | 3000 | http://localhost:3000 |
 | postgres | 5432 | forge:forge@localhost:5432/content_forge |
 | redis | 6379 | redis://localhost:6379 |
 
-### 환경 변수
-- `.env.example`에 모든 필요한 환경 변수 템플릿이 있다
-- 로컬 개발 시 `.env.local`에 실제 값을 넣어 사용
-- Docker 사용 시 DATABASE_URL, REDIS_URL은 docker-compose.yml에서 자동 주입
+### Environment Variables
+- `.env.example` — all variable templates
+- `.env.local` — local development values
+- Docker auto-injects DATABASE_URL, REDIS_URL
 
-## 테스트
+---
 
-- 단위 테스트: Vitest
-- E2E 테스트: Playwright
-- Agent 테스트: 고정된 입력 → 출력 스냅샷 검증
-- Docker 테스트: `make test-docker` (Postgres + Redis 포함 통합 테스트)
-- CI 테스트: GitHub Actions에서 PR마다 자동 실행
+## Testing
 
-## 작업 흐름 (워크플로우)
+- Unit tests: Vitest
+- E2E tests: Playwright
+- Agent tests: fixed input → output snapshot verification
+- Docker tests: `make test-docker` (Postgres + Redis integration)
+- CI tests: auto-run on every PR via GitHub Actions
+
+---
+
+## Workflow
 
 ```
-1. 이슈 확인: gh issue view {번호}
-2. 브랜치 생성: git checkout -b feat/#{번호}-설명
-3. PRD 읽기: 이슈에 명시된 PRD 문서 확인
-4. 구현
-5. 로컬 CI 검증: make ci-quick (빠른 검증) 또는 make ci (전체 CI)
-6. 커밋: 메시지에 #{번호} 포함
-7. Push: pre-push hook이 자동으로 lint + typecheck 실행
-8. PR 생성: gh pr create --title "feat: ..." --body "Closes #{번호}"
-9. CI 통과 확인 (self-hosted runner가 로컬에서 실행)
-10. 머지 후: IMPLEMENTATION_TRACKER.md 해당 항목 체크 + 파일 경로 기록
+1. Check issue: gh issue view {number}
+2. Create branch: git checkout -b feat/#{number}-description
+3. Read PRD: check referenced documents
+4. Create task folder: 03-implementation/tasks/active/TASK-NNN-name/
+5. Write PLAN.md before coding
+6. Implement
+7. Local CI: make ci-quick or make ci
+8. Commit: include #{number} in message
+9. Push: pre-push hook runs lint + typecheck
+10. Create PR: gh pr create --title "feat: ..." --body "Closes #{number}"
+11. CI passes (self-hosted runner)
+12. Merge → update IMPLEMENTATION_TRACKER.md → move task to completed/
 ```
 
-## 이슈 완료 후 세션 관리
+---
 
-이슈 작업이 완료되면 (커밋 또는 PR 생성 후) 반드시 다음 순서를 따른다:
+## Session Management
 
-1. **MEMORY.md 업데이트**: 완료된 작업, 다음 작업, 변경된 사항 반영
-2. **세션 정리**: 대화가 길어졌으면 (이슈 1개 이상 처리 완료) `/clear` 실행
+After completing an issue (commit or PR created):
 
-### /ralph 사용 시 흐름
-```
-구현 → architect 검증 통과 → /cancel → MEMORY.md 저장 → /clear
-```
+1. **Update MEMORY.md**: reflect completed work, next tasks, changes
+2. **Session cleanup**: run `/clear` if conversation is long (1+ issues completed)
 
-### 규칙
-- 이슈 완료 시점에 항상 memory 반영 먼저, `/clear`는 그 다음
-- `/clear` 전에 사용자에게 "memory 저장 완료, /clear 하겠습니다" 안내
-- 새 세션에서는 CLAUDE.md + `gh issue list` + IMPLEMENTATION_TRACKER.md 확인 후 다음 이슈 진행
+### Rules
+- Always save memory before `/clear`
+- Announce "memory saved, running /clear" before clearing
+- New session: check CLAUDE.md + `gh issue list` + IMPLEMENTATION_TRACKER.md → proceed
+
+---
+
+## Process Safety Rules
+
+**NEVER kill processes by port number blindly.** Find the specific process by name first.
+
+### Dev Server
+| Server | Directory | Start Command | Port |
+|--------|-----------|---------------|------|
+| content-forge | `.` | `bun dev` | 3000 |
+
+---
+
+## File Location Rules
+
+| Type of Work | Where to Document | Where to Code |
+|--------------|-------------------|---------------|
+| Vision/Strategy | `01-management/` | — |
+| Requirements | `02-research/requirements/` | — |
+| Architecture | `02-research/architecture/` | — |
+| Task Planning | `03-implementation/tasks/active/TASK-NNN/` | — |
+| Bug-Fix Planning | `03-implementation/bugfix/active/BUGFIX-NNN/` | — |
+| Patch Planning | `03-implementation/patch/active/PATCH-NNN/` | — |
+| Actual Code | — | `src/` |
+| Tests | `04-quality/test-plans/current/` | `src/` or `tests/` |
+| Bug Reports | `04-quality/bug-reports/` | — |
+| Screenshots | `04-quality/screenshots/` (gitignored) | — |
+| Design/UI Guidelines | `05-design-team/guidelines/` | — |
+| Security Guidelines | `06-security-team/guidelines/` | — |
+| Deployment Guidelines | `07-deployment-team/guidelines/` | — |
+| Migration Policy | `08-db-migration-team/guidelines/` | — |

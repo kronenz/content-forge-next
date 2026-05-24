@@ -109,6 +109,8 @@ export function SourceDialog({
   const [form, setForm] = useState<FormState>(() =>
     defaultValues ? sourceToForm(defaultValues) : DEFAULT_FORM
   );
+  const [showGroupSuggestions, setShowGroupSuggestions] = useState(false);
+  const { data: existingGroups } = trpc.source.listGroups.useQuery();
 
   // Reset form when dialog opens
   const handleOpenChange = (nextOpen: boolean) => {
@@ -123,6 +125,7 @@ export function SourceDialog({
   const createMutation = trpc.source.create.useMutation({
     onSuccess: () => {
       utils.source.list.invalidate();
+      utils.source.listGroups.invalidate();
       onOpenChange(false);
     },
     onError: (err) => {
@@ -133,6 +136,7 @@ export function SourceDialog({
   const updateMutation = trpc.source.update.useMutation({
     onSuccess: () => {
       utils.source.list.invalidate();
+      utils.source.listGroups.invalidate();
       onOpenChange(false);
     },
     onError: (err) => {
@@ -249,15 +253,47 @@ export function SourceDialog({
             />
           </div>
 
-          {/* Group */}
+          {/* Group (autocomplete) */}
           <div className="grid gap-1.5">
             <Label htmlFor="source-group">그룹</Label>
-            <Input
-              id="source-group"
-              placeholder="AI 트렌드"
-              value={form.groupName}
-              onChange={(e) => set("groupName", e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="source-group"
+                placeholder="AI 트렌드"
+                value={form.groupName}
+                onChange={(e) => {
+                  set("groupName", e.target.value);
+                  setShowGroupSuggestions(true);
+                }}
+                onFocus={() => setShowGroupSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowGroupSuggestions(false), 150)}
+                autoComplete="off"
+              />
+              {showGroupSuggestions && (() => {
+                const filtered = (existingGroups ?? []).filter(
+                  (g) => !form.groupName || g.toLowerCase().includes(form.groupName.toLowerCase()),
+                );
+                if (filtered.length === 0) return null;
+                return (
+                  <div className="absolute top-full left-0 right-0 mt-1 rounded-md border bg-popover p-1 shadow-md z-50 max-h-[120px] overflow-auto">
+                    {filtered.map((group) => (
+                      <button
+                        key={group}
+                        type="button"
+                        className="w-full text-left rounded-sm px-2 py-1.5 text-sm hover:bg-accent transition truncate"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          set("groupName", group);
+                          setShowGroupSuggestions(false);
+                        }}
+                      >
+                        {group}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
 
           {/* Tags */}

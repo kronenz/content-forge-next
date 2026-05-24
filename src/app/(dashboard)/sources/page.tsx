@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Plus, Search, Inbox } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Plus, Search, Inbox, Edit2, Trash2, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SourceCard } from "@/components/sources/source-card";
 import { SourceDialog } from "@/components/sources/source-dialog";
+import { SourceSuggestPanel } from "@/components/sources/source-suggest-panel";
 import { DeleteSourceDialog } from "@/components/sources/delete-source-dialog";
 import { trpc } from "@/lib/trpc";
 
@@ -68,7 +69,6 @@ export default function SourcesPage() {
 
   // Create dialog state
   const [createOpen, setCreateOpen] = useState(false);
-
   // Edit dialog state
   const [editOpen, setEditOpen] = useState(false);
   const [editSource, setEditSource] = useState<Source | null>(null);
@@ -76,6 +76,11 @@ export default function SourcesPage() {
   // Delete dialog state
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteSource, setDeleteSource] = useState<Source | null>(null);
+
+  // Group management state
+  const [editingGroup, setEditingGroup] = useState<string | null>(null);
+  const [editGroupName, setEditGroupName] = useState("");
+  const editGroupRef = useRef<HTMLInputElement>(null);
 
   // Debounce search input by 300ms
   useEffect(() => {
@@ -95,6 +100,46 @@ export default function SourcesPage() {
   const toggleActiveMutation = trpc.source.toggleActive.useMutation({
     onSuccess: () => utils.source.list.invalidate(),
   });
+
+  const renameGroupMutation = trpc.source.renameGroup.useMutation({
+    onSuccess: (data) => {
+      utils.source.list.invalidate();
+      utils.source.listGroups.invalidate();
+      setEditingGroup(null);
+      toast.success(`그룹 이름이 변경되었습니다 (${data.count}개 소스)`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  const deleteGroupMutation = trpc.source.deleteGroup.useMutation({
+    onSuccess: (data) => {
+      utils.source.list.invalidate();
+      utils.source.listGroups.invalidate();
+      toast.success(`그룹이 해제되었습니다 (${data.count}개 소스)`);
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  function handleStartRenameGroup(groupName: string) {
+    setEditingGroup(groupName);
+    setEditGroupName(groupName);
+    setTimeout(() => editGroupRef.current?.focus(), 50);
+  }
+
+  function handleSaveRenameGroup(oldName: string) {
+    const newName = editGroupName.trim();
+    if (!newName || newName === oldName) {
+      setEditingGroup(null);
+      return;
+    }
+    renameGroupMutation.mutate({ oldName, newName });
+  }
+
+  function handleDeleteGroup(groupName: string) {
+    if (confirm(`"${groupName}" 그룹을 해제하시겠습니까?\n소스는 삭제되지 않고 "기타"로 이동합니다.`)) {
+      deleteGroupMutation.mutate({ groupName });
+    }
+  }
 
   const [collectingIds, setCollectingIds] = useState<Set<string>>(new Set());
   const collectMutation = trpc.source.collect.useMutation({
@@ -160,11 +205,14 @@ export default function SourcesPage() {
             콘텐츠 수집 소스를 등록하고 관리합니다.
           </p>
         </div>
-        <Button className="flex-shrink-0" onClick={() => setCreateOpen(true)}>
+        <Button onClick={() => setCreateOpen(true)} className="flex-shrink-0">
           <Plus className="mr-2 h-4 w-4" />
           소스 추가
         </Button>
       </div>
+
+      {/* AI Suggest Panel */}
+      <SourceSuggestPanel />
 
       {/* Search + Type filter */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -201,9 +249,61 @@ export default function SourcesPage() {
         <div className="space-y-6">
           {groupEntries.map(([groupName, groupSources]) => (
             <div key={groupName}>
-              <h2 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-                {groupName}
-              </h2>
+              <div className="flex items-center gap-2 mb-3 group/grp">
+                {editingGroup === groupName ? (
+                  <div className="flex items-center gap-1.5">
+                    <Input
+                      ref={editGroupRef}
+                      value={editGroupName}
+                      onChange={(e) => setEditGroupName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveRenameGroup(groupName);
+                        if (e.key === "Escape") setEditingGroup(null);
+                      }}
+                      className="h-7 text-sm w-40"
+                    />
+                    <button
+                      onClick={() => handleSaveRenameGroup(groupName)}
+                      className="h-6 w-6 flex items-center justify-center rounded hover:bg-accent text-primary"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setEditingGroup(null)}
+                      className="h-6 w-6 flex items-center justify-center rounded hover:bg-accent text-muted-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      {groupName}
+                    </h2>
+                    <span className="text-xs text-muted-foreground/60">
+                      ({groupSources.length})
+                    </span>
+                    {groupName !== "기타" && (
+                      <div className="flex items-center gap-0.5 opacity-0 group-hover/grp:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleStartRenameGroup(groupName)}
+                          className="h-6 w-6 flex items-center justify-center rounded hover:bg-accent text-muted-foreground"
+                          title="그룹 이름 변경"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteGroup(groupName)}
+                          className="h-6 w-6 flex items-center justify-center rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                          title="그룹 해제"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
               <div className="space-y-3">
                 {groupSources.map((source) => (
                   <SourceCard
